@@ -184,6 +184,23 @@ export const translations = {
     "teacher.notfound.title": "Teacher not found",
     "teacher.notfound.desc": "You don't have access to this teacher's profile.",
     "teacher.view": "View profile",
+
+    // Class request
+    "req.button": "Request slot",
+    "req.title": "Request a class slot",
+    "req.desc": "Pick a preferred date and time. Your teacher will confirm.",
+    "req.date": "Preferred date",
+    "req.date.pick": "Pick a date",
+    "req.time": "Preferred time",
+    "req.duration": "Duration (minutes)",
+    "req.note": "Note for your teacher (optional)",
+    "req.note.ph": "Anything specific you'd like to focus on?",
+    "req.cancel": "Cancel",
+    "req.submit": "Send request",
+    "req.submitting": "Sending…",
+    "req.success": "Request sent. Your teacher will confirm soon.",
+    "req.error": "Could not send request. Please try again.",
+    "req.validation": "Please choose a date and time.",
   },
 
   ur: {
