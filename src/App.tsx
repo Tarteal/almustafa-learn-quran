@@ -11,6 +11,7 @@ import Auth from "./pages/Auth.tsx";
 import Enroll from "./pages/Enroll.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import TeacherProfile from "./pages/TeacherProfile.tsx";
+import Admin from "./pages/Admin.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
