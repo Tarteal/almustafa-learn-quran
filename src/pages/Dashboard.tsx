@@ -210,6 +210,11 @@ const Dashboard = () => {
                               </a>
                             </Button>
                           )}
+                          <Button variant="emerald" size="sm" asChild>
+                            <Link to={`/teacher/${teacher.id}`}>
+                              <GraduationCap className="h-4 w-4" /> {t("teacher.view")}
+                            </Link>
+                          </Button>
                         </div>
 
                         <div className="border-t border-border pt-4">
