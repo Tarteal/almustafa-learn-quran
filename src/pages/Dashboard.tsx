@@ -131,7 +131,7 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-overlay">
+    <main className="min-h-screen pt-28 pb-20 px-4 bg-background pattern-overlay">
       <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
@@ -166,7 +166,7 @@ const Dashboard = () => {
                 const teacher = assignment?.teachers;
                 const upcoming = classes.filter((c) => c.enrollment_id === en.id).slice(0, 3);
                 return (
-                  <article key={en.id} className="bg-card border border-border rounded-2xl p-6 shadow-card hover:shadow-elegant transition-smooth">
+                  <article key={en.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-card hover:shadow-elegant transition-smooth">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-3">{en.courses?.title}</p>
                     {teacher ? (
                       <>
@@ -186,14 +186,14 @@ const Dashboard = () => {
                                 {teacher.full_name}
                               </Link>
                             </h3>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-0.5">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground/70 mt-0.5">
                               {teacher.specialization && <span>{teacher.specialization}</span>}
                               {teacher.country && (
                                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {teacher.country}</span>
                               )}
                             </div>
                             {teacher.bio && (
-                              <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{teacher.bio}</p>
+                              <p className="text-xs text-foreground/70 mt-2 line-clamp-2">{teacher.bio}</p>
                             )}
                           </div>
                         </div>
@@ -219,11 +219,11 @@ const Dashboard = () => {
                         </div>
 
                         <div className="border-t border-border pt-4">
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                          <p className="text-xs uppercase tracking-wider text-foreground/70 mb-3 flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5" /> {t("dash.upcoming")}
                           </p>
                           {upcoming.length === 0 ? (
-                            <p className="text-xs text-muted-foreground">{t("dash.upcoming.none")}</p>
+                            <p className="text-xs text-foreground/70">{t("dash.upcoming.none")}</p>
                           ) : (
                             <ul className="space-y-2">
                               {upcoming.map((c) => {
@@ -234,7 +234,7 @@ const Dashboard = () => {
                                       <p className="font-medium text-foreground">
                                         {d.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}
                                       </p>
-                                      <p className="text-xs text-muted-foreground">
+                                      <p className="text-xs text-foreground/70">
                                         {d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} {t("dash.minutes")}
                                       </p>
                                     </div>
@@ -262,7 +262,7 @@ const Dashboard = () => {
                         </div>
                       </>
                     ) : (
-                      <p className="text-sm text-muted-foreground">{t("dash.teachers.pending")}</p>
+                      <p className="text-sm text-foreground/70">{t("dash.teachers.pending")}</p>
                     )}
                   </article>
                 );
@@ -277,18 +277,18 @@ const Dashboard = () => {
             <Sparkles className="h-5 w-5 text-gold-deep" /> {t("dash.nextup")}
           </h2>
           {recommendations.length === 0 ? (
-            <div className="bg-card border border-border rounded-2xl p-6 text-sm text-muted-foreground shadow-card">
+            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 text-sm text-foreground/70 shadow-card">
               {enrollments.length === 0 ? t("dash.nextup.none.empty") : t("dash.nextup.none.done")}
             </div>
           ) : (
             <div className="grid md:grid-cols-3 gap-4">
               {recommendations.map(({ lesson, course }) => (
-                <article key={lesson.id} className="bg-card border border-border rounded-2xl p-5 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
+                <article key={lesson.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-5 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-1">{course?.title}</p>
                   <h3 className="font-display text-lg mb-1">{t("dash.lesson")} {lesson.order_index}: {lesson.title}</h3>
-                  <p className="text-xs text-muted-foreground flex-1">{lesson.summary}</p>
+                  <p className="text-xs text-foreground/70 flex-1">{lesson.summary}</p>
                   <div className="flex items-center justify-between mt-4">
-                    <span className="text-xs text-muted-foreground">{lesson.duration_min} {t("dash.minutes")}</span>
+                    <span className="text-xs text-foreground/70">{lesson.duration_min} {t("dash.minutes")}</span>
                     <Button size="sm" variant="gold" onClick={() => onToggleLesson(lesson.id, false)}>
                       <PlayCircle className="h-4 w-4" /> {t("dash.start")}
                     </Button>
@@ -303,9 +303,9 @@ const Dashboard = () => {
         <section>
           <h2 className="font-display text-xl mb-4">{t("dash.mycourses")}</h2>
           {enrollments.length === 0 ? (
-            <div className="bg-card border border-border rounded-2xl p-10 text-center shadow-card">
+            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-10 text-center shadow-card">
               <BookOpen className="h-10 w-10 mx-auto text-gold-deep mb-3" />
-              <p className="text-muted-foreground mb-4">{t("dash.empty.title")}</p>
+              <p className="text-foreground/70 mb-4">{t("dash.empty.title")}</p>
               <Button variant="gold" asChild><Link to="/enroll">{t("dash.browse")}</Link></Button>
             </div>
           ) : (
@@ -315,7 +315,7 @@ const Dashboard = () => {
                 const done = courseLessons.filter((l) => completedIds.has(l.id)).length;
                 const pct = courseLessons.length ? Math.round((done / courseLessons.length) * 100) : 0;
                 return (
-                  <article key={en.id} className="bg-card border border-border rounded-2xl p-6 shadow-card">
+                  <article key={en.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-card">
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -323,16 +323,16 @@ const Dashboard = () => {
                           <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
                             en.status === "active" ? "bg-emerald/15 text-emerald" :
                             en.status === "pending" ? "bg-gold/15 text-gold-deep" :
-                            "bg-muted text-muted-foreground"
+                            "bg-muted text-foreground/70"
                           }`}>{statusLabel(en.status)}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-foreground/70">
                           {en.plan} {t("dash.plan")} · {en.courses?.duration} · <span className="capitalize">{en.courses?.level}</span> · {t("dash.enrolled")} {new Date(en.created_at).toLocaleDateString(locale)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-display text-2xl text-foreground">{pct}%</p>
-                        <p className="text-xs text-muted-foreground">{done}/{courseLessons.length} {t("dash.lessons.count")}</p>
+                        <p className="text-xs text-foreground/70">{done}/{courseLessons.length} {t("dash.lessons.count")}</p>
                       </div>
                     </div>
                     <Progress value={pct} className="h-2 mb-4" />
@@ -351,12 +351,12 @@ const Dashboard = () => {
                               {isDone && <Check className="h-3.5 w-3.5" />}
                             </button>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-sm ${isDone ? "line-through text-muted-foreground" : "text-foreground"}`}>
-                                <span className="text-muted-foreground mr-2">{l.order_index}.</span>{l.title}
+                              <p className={`text-sm ${isDone ? "line-through text-foreground/70" : "text-foreground"}`}>
+                                <span className="text-foreground/70 mr-2">{l.order_index}.</span>{l.title}
                               </p>
-                              <p className="text-xs text-muted-foreground truncate">{l.summary}</p>
+                              <p className="text-xs text-foreground/70 truncate">{l.summary}</p>
                             </div>
-                            <span className="text-xs text-muted-foreground shrink-0">{l.duration_min}{t("dash.minutes") === "min" ? "m" : ` ${t("dash.minutes")}`}</span>
+                            <span className="text-xs text-foreground/70 shrink-0">{l.duration_min}{t("dash.minutes") === "min" ? "m" : ` ${t("dash.minutes")}`}</span>
                           </li>
                         );
                       })}
@@ -373,13 +373,13 @@ const Dashboard = () => {
 };
 
 const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string | number; accent: "emerald" | "gold" }) => (
-  <div className="bg-card border border-border rounded-2xl p-5 shadow-card">
+  <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-5 shadow-card">
     <div className="flex items-center gap-3">
       <div className={`h-10 w-10 rounded-xl grid place-items-center ${accent === "gold" ? "bg-gold/15 text-gold-deep" : "bg-emerald/15 text-emerald"}`}>
         <Icon className="h-5 w-5" />
       </div>
       <div>
-        <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
+        <p className="text-xs text-foreground/70 uppercase tracking-wider">{label}</p>
         <p className="font-display text-2xl">{value}</p>
       </div>
     </div>
