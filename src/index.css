@@ -140,3 +140,48 @@
     transform: scaleX(-1);
   }
 }
+
+/* Dark, high-contrast scope for app surfaces (dashboard, auth) */
+.surface-dark {
+  --background: 158 50% 7%;
+  --foreground: 42 60% 96%;
+
+  --card: 158 45% 11%;
+  --card-foreground: 42 60% 96%;
+
+  --popover: 158 45% 11%;
+  --popover-foreground: 42 60% 96%;
+
+  --primary: 42 80% 60%;
+  --primary-foreground: 158 60% 10%;
+  --primary-glow: 45 85% 70%;
+
+  --secondary: 158 40% 16%;
+  --secondary-foreground: 42 60% 96%;
+
+  --muted: 158 35% 18%;
+  --muted-foreground: 42 30% 80%;
+
+  --accent: 42 80% 60%;
+  --accent-foreground: 158 60% 10%;
+  --accent-soft: 158 40% 18%;
+
+  --gold: 42 85% 62%;
+  --gold-deep: 42 90% 70%;
+  --gold-light: 45 90% 78%;
+
+  --emerald-deep: 158 60% 8%;
+  --emerald: 158 55% 18%;
+  --emerald-soft: 158 35% 30%;
+
+  --destructive: 0 80% 55%;
+  --destructive-foreground: 42 60% 96%;
+
+  --border: 158 30% 28%;
+  --input: 158 30% 32%;
+  --ring: 42 80% 60%;
+
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
