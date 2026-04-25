@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
-import SurfaceThemeToggle, { useSurfaceTheme } from "@/components/SurfaceThemeToggle";
 
 const signUpSchema = z.object({
   full_name: z.string().trim().min(2, "Name is required").max(100),
@@ -31,7 +30,6 @@ const Auth = () => {
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ full_name: "", email: "", phone: "", password: "" });
-  const { theme, toggle } = useSurfaceTheme();
 
   useEffect(() => {
     if (!loading && user) navigate(redirect, { replace: true });
@@ -83,11 +81,8 @@ const Auth = () => {
   };
 
   return (
-    <main className={`${theme === "dark" ? "surface-dark" : "surface-light"} min-h-screen grid place-items-center px-4 py-24 relative`}>
+    <main className="min-h-screen grid place-items-center px-4 py-24 bg-background pattern-overlay">
       <SEO title={mode === "signup" ? "Create Account · Almustafa Quran Academy" : "Sign In · Almustafa Quran Academy"} description="Sign in or create your student account to enroll in Quran courses." />
-      <div className="absolute top-24 right-4">
-        <SurfaceThemeToggle theme={theme} onToggle={toggle} />
-      </div>
       <div className="w-full max-w-md bg-card border-2 border-border rounded-2xl shadow-elegant p-8 ring-1 ring-foreground/5">
         <div className="text-center mb-6">
           <div className="mx-auto h-12 w-12 rounded-full gradient-emerald grid place-items-center shadow-elegant mb-3">
