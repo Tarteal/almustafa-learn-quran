@@ -1,16 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/auth/AuthContext";
 import LangSwitcher from "./LangSwitcher";
 
 const Navbar = () => {
   const { t } = useI18n();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out");
+    setOpen(false);
+    navigate("/");
+  };
 
   const links = [
     { label: t("nav.home"), href: "#home" },
@@ -70,6 +79,9 @@ const Navbar = () => {
               <Button variant="gold" size="sm" asChild>
                 <Link to="/enroll">Enroll</Link>
               </Button>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4" /> Sign out
+              </Button>
             </>
           ) : (
             <>
@@ -112,9 +124,14 @@ const Navbar = () => {
               <Link to="/enroll" onClick={() => setOpen(false)}>Enroll Now</Link>
             </Button>
             {user ? (
-              <Button variant="ghost" asChild>
-                <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
-              </Button>
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+                </Button>
+                <Button variant="ghost" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4" /> Sign out
+                </Button>
+              </>
             ) : (
               <Button variant="ghost" asChild>
                 <Link to="/auth?mode=signin" onClick={() => setOpen(false)}>{t("nav.signin")}</Link>
