@@ -1,12 +1,14 @@
 import SectionHeading from "./SectionHeading";
 import { Button } from "@/components/ui/button";
 import { Check, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/I18nContext";
 
 const Pricing = () => {
   const { t } = useI18n();
   const plans = [
     {
+      planId: "basic",
       name: t("pricing.basic.name"),
       price: 45,
       desc: t("pricing.basic.desc"),
@@ -14,6 +16,7 @@ const Pricing = () => {
       popular: false,
     },
     {
+      planId: "standard",
       name: t("pricing.standard.name"),
       price: 75,
       desc: t("pricing.standard.desc"),
@@ -21,6 +24,7 @@ const Pricing = () => {
       popular: true,
     },
     {
+      planId: "premium",
       name: t("pricing.premium.name"),
       price: 120,
       desc: t("pricing.premium.desc"),
@@ -87,8 +91,9 @@ const Pricing = () => {
                 variant={plan.popular ? "gold" : "emerald"}
                 size="lg"
                 className="w-full"
+                asChild
               >
-                {t("pricing.subscribe")}
+                <Link to={`/enroll?plan=${plan.planId}`}>{t("pricing.subscribe")}</Link>
               </Button>
             </div>
           ))}
