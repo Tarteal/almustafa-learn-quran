@@ -131,10 +131,10 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-4 bg-background pattern-overlay">
+    <main className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-background pattern-overlay">
       <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
       <div className="container max-w-6xl">
-        <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <header className="flex flex-wrap items-center justify-between gap-4 mb-10">
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1">{t("dash.eyebrow")}</p>
             <h1 className="font-display text-3xl">{t("dash.greeting")} {profile?.full_name || user?.email}</h1>
@@ -147,7 +147,7 @@ const Dashboard = () => {
         </header>
 
         {/* Stats */}
-        <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           <StatCard icon={BookOpen} label={t("dash.stat.courses")} value={enrollments.length} accent="emerald" />
           <StatCard icon={Trophy} label={t("dash.stat.lessons")} value={`${stats.completed}/${stats.totalLessons || 0}`} accent="gold" />
           <StatCard icon={Flame} label={t("dash.stat.minutes")} value={stats.minutes} accent="emerald" />
@@ -156,7 +156,7 @@ const Dashboard = () => {
 
         {/* Assigned Teachers */}
         {enrollments.length > 0 && (
-          <section className="mb-10">
+          <section className="mb-12">
             <h2 className="font-display text-xl mb-4 flex items-center gap-2">
               <GraduationCap className="h-5 w-5 text-gold-deep" /> {t("dash.teachers.title")}
             </h2>
@@ -166,7 +166,7 @@ const Dashboard = () => {
                 const teacher = assignment?.teachers;
                 const upcoming = classes.filter((c) => c.enrollment_id === en.id).slice(0, 3);
                 return (
-                  <article key={en.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-card hover:shadow-elegant transition-smooth">
+                  <article key={en.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 sm:p-8 shadow-elegant hover:shadow-deep transition-smooth">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-3">{en.courses?.title}</p>
                     {teacher ? (
                       <>
@@ -272,18 +272,18 @@ const Dashboard = () => {
         )}
 
         {/* Next up */}
-        <section className="mb-10">
+        <section className="mb-12">
           <h2 className="font-display text-xl mb-4 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-gold-deep" /> {t("dash.nextup")}
           </h2>
           {recommendations.length === 0 ? (
-            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 text-sm text-foreground/70 shadow-card">
+            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 sm:p-8 text-sm text-foreground/70 shadow-card">
               {enrollments.length === 0 ? t("dash.nextup.none.empty") : t("dash.nextup.none.done")}
             </div>
           ) : (
             <div className="grid md:grid-cols-3 gap-4">
               {recommendations.map(({ lesson, course }) => (
-                <article key={lesson.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-5 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
+                <article key={lesson.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-elegant hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-1">{course?.title}</p>
                   <h3 className="font-display text-lg mb-1">{t("dash.lesson")} {lesson.order_index}: {lesson.title}</h3>
                   <p className="text-xs text-foreground/70 flex-1">{lesson.summary}</p>
@@ -303,7 +303,7 @@ const Dashboard = () => {
         <section>
           <h2 className="font-display text-xl mb-4">{t("dash.mycourses")}</h2>
           {enrollments.length === 0 ? (
-            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-10 text-center shadow-card">
+            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-10 sm:p-12 text-center shadow-card">
               <BookOpen className="h-10 w-10 mx-auto text-gold-deep mb-3" />
               <p className="text-foreground/70 mb-4">{t("dash.empty.title")}</p>
               <Button variant="gold" asChild><Link to="/enroll">{t("dash.browse")}</Link></Button>
@@ -315,7 +315,7 @@ const Dashboard = () => {
                 const done = courseLessons.filter((l) => completedIds.has(l.id)).length;
                 const pct = courseLessons.length ? Math.round((done / courseLessons.length) * 100) : 0;
                 return (
-                  <article key={en.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-card">
+                  <article key={en.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 sm:p-8 shadow-elegant">
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -373,7 +373,7 @@ const Dashboard = () => {
 };
 
 const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string | number; accent: "emerald" | "gold" }) => (
-  <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-5 shadow-card">
+  <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-elegant">
     <div className="flex items-center gap-3">
       <div className={`h-10 w-10 rounded-xl grid place-items-center ${accent === "gold" ? "bg-gold/15 text-gold-deep" : "bg-emerald/15 text-emerald"}`}>
         <Icon className="h-5 w-5" />
