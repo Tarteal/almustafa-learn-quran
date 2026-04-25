@@ -124,9 +124,14 @@ const Navbar = () => {
               <Link to="/enroll" onClick={() => setOpen(false)}>Enroll Now</Link>
             </Button>
             {user ? (
-              <Button variant="ghost" asChild>
-                <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
-              </Button>
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+                </Button>
+                <Button variant="ghost" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4" /> Sign out
+                </Button>
+              </>
             ) : (
               <Button variant="ghost" asChild>
                 <Link to="/auth?mode=signin" onClick={() => setOpen(false)}>{t("nav.signin")}</Link>
