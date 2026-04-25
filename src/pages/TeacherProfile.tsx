@@ -27,7 +27,7 @@ const TeacherProfile = () => {
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const locale = lang === "ar" ? "ar" : lang === "ur" ? "ur-PK" : "en-US";
+  const locale = lang === "ar" ? "ar" : "en-US";
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
