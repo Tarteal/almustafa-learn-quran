@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame, Mail, MessageCircle, Video, Calendar, GraduationCap, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
+import { useI18n } from "@/i18n/I18nContext";
+import LangSwitcher from "@/components/site/LangSwitcher";
 
 type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
 type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
@@ -15,8 +17,11 @@ type Teacher = { id: string; full_name: string; bio: string | null; country: str
 type Assignment = { enrollment_id: string; teacher_id: string; teachers: Teacher | null };
 type ClassRow = { id: string; enrollment_id: string; teacher_id: string; starts_at: string; duration_min: number; meeting_url: string | null; status: string };
 
+const localeFor = (lang: string) => (lang === "ar" ? "ar" : lang === "ur" ? "ur-PK" : "en-US");
+
 const Dashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -25,6 +30,8 @@ const Dashboard = () => {
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const locale = localeFor(lang);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
@@ -107,11 +114,16 @@ const Dashboard = () => {
       setCompletedIds((s) => new Set(s).add(lessonId));
       const { error } = await supabase.from("lesson_progress").insert({ user_id: user.id, lesson_id: lessonId });
       if (error) { toast.error(error.message); load(); }
-      else toast.success("Lesson marked complete. BarakAllāhu fīk!");
+      else toast.success(t("dash.toast.completed"));
     }
   };
 
   const onSignOut = async () => { await signOut(); navigate("/"); };
+
+  const statusLabel = (s: string) =>
+    s === "active" ? t("dash.status.active") :
+    s === "pending" ? t("dash.status.pending") :
+    s === "completed" ? t("dash.status.completed") : s;
 
   if (authLoading || loading) {
     return <div className="min-h-screen grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
@@ -123,36 +135,35 @@ const Dashboard = () => {
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1">Student Dashboard</p>
-            <h1 className="font-display text-3xl">As-salāmu ʿalaykum, {profile?.full_name || user?.email}</h1>
+            <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1">{t("dash.eyebrow")}</p>
+            <h1 className="font-display text-3xl">{t("dash.greeting")} {profile?.full_name || user?.email}</h1>
           </div>
-          <div className="flex gap-2">
-            <Button variant="emerald" asChild><Link to="/enroll"><Plus className="h-4 w-4" /> Enroll in Course</Link></Button>
-            <Button variant="ghost" onClick={onSignOut}><LogOut className="h-4 w-4" /> Sign out</Button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <LangSwitcher />
+            <Button variant="emerald" asChild><Link to="/enroll"><Plus className="h-4 w-4" /> {t("dash.enroll")}</Link></Button>
+            <Button variant="ghost" onClick={onSignOut}><LogOut className="h-4 w-4" /> {t("dash.signout")}</Button>
           </div>
         </header>
 
         {/* Stats */}
         <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard icon={BookOpen} label="Enrolled Courses" value={enrollments.length} accent="emerald" />
-          <StatCard icon={Trophy} label="Lessons Completed" value={`${stats.completed}/${stats.totalLessons || 0}`} accent="gold" />
-          <StatCard icon={Flame} label="Minutes Studied" value={stats.minutes} accent="emerald" />
-          <StatCard icon={Sparkles} label="Overall Progress" value={`${stats.pct}%`} accent="gold" />
+          <StatCard icon={BookOpen} label={t("dash.stat.courses")} value={enrollments.length} accent="emerald" />
+          <StatCard icon={Trophy} label={t("dash.stat.lessons")} value={`${stats.completed}/${stats.totalLessons || 0}`} accent="gold" />
+          <StatCard icon={Flame} label={t("dash.stat.minutes")} value={stats.minutes} accent="emerald" />
+          <StatCard icon={Sparkles} label={t("dash.stat.progress")} value={`${stats.pct}%`} accent="gold" />
         </section>
 
         {/* Assigned Teachers */}
         {enrollments.length > 0 && (
           <section className="mb-10">
             <h2 className="font-display text-xl mb-4 flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-gold-deep" /> Your Assigned Teachers
+              <GraduationCap className="h-5 w-5 text-gold-deep" /> {t("dash.teachers.title")}
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
               {enrollments.map((en) => {
                 const assignment = assignments.find((a) => a.enrollment_id === en.id);
                 const teacher = assignment?.teachers;
-                const upcoming = classes
-                  .filter((c) => c.enrollment_id === en.id)
-                  .slice(0, 3);
+                const upcoming = classes.filter((c) => c.enrollment_id === en.id).slice(0, 3);
                 return (
                   <article key={en.id} className="bg-card border border-border rounded-2xl p-6 shadow-card hover:shadow-elegant transition-smooth">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-3">{en.courses?.title}</p>
@@ -185,13 +196,13 @@ const Dashboard = () => {
                         <div className="flex flex-wrap gap-2 mb-4">
                           {teacher.email && (
                             <Button variant="ghost" size="sm" asChild>
-                              <a href={`mailto:${teacher.email}`}><Mail className="h-4 w-4" /> Email</a>
+                              <a href={`mailto:${teacher.email}`}><Mail className="h-4 w-4" /> {t("dash.contact.email")}</a>
                             </Button>
                           )}
                           {teacher.whatsapp && (
                             <Button variant="ghost" size="sm" asChild>
                               <a href={`https://wa.me/${teacher.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer">
-                                <MessageCircle className="h-4 w-4" /> WhatsApp
+                                <MessageCircle className="h-4 w-4" /> {t("dash.contact.whatsapp")}
                               </a>
                             </Button>
                           )}
@@ -199,10 +210,10 @@ const Dashboard = () => {
 
                         <div className="border-t border-border pt-4">
                           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5" /> Upcoming Classes
+                            <Calendar className="h-3.5 w-3.5" /> {t("dash.upcoming")}
                           </p>
                           {upcoming.length === 0 ? (
-                            <p className="text-xs text-muted-foreground">No classes scheduled yet. Your teacher will reach out soon.</p>
+                            <p className="text-xs text-muted-foreground">{t("dash.upcoming.none")}</p>
                           ) : (
                             <ul className="space-y-2">
                               {upcoming.map((c) => {
@@ -211,16 +222,16 @@ const Dashboard = () => {
                                   <li key={c.id} className="flex items-center justify-between gap-3 text-sm">
                                     <div>
                                       <p className="font-medium text-foreground">
-                                        {d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                                        {d.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}
                                       </p>
                                       <p className="text-xs text-muted-foreground">
-                                        {d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} min
+                                        {d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} {t("dash.minutes")}
                                       </p>
                                     </div>
                                     {c.meeting_url && (
                                       <Button size="sm" variant="gold" asChild>
                                         <a href={c.meeting_url} target="_blank" rel="noreferrer">
-                                          <Video className="h-4 w-4" /> Join
+                                          <Video className="h-4 w-4" /> {t("dash.join")}
                                         </a>
                                       </Button>
                                     )}
@@ -232,7 +243,7 @@ const Dashboard = () => {
                         </div>
                       </>
                     ) : (
-                      <p className="text-sm text-muted-foreground">A teacher will be assigned to you shortly, in shaa Allah.</p>
+                      <p className="text-sm text-muted-foreground">{t("dash.teachers.pending")}</p>
                     )}
                   </article>
                 );
@@ -241,25 +252,26 @@ const Dashboard = () => {
           </section>
         )}
 
+        {/* Next up */}
         <section className="mb-10">
-          <h2 className="font-display text-xl mb-4 flex items-center gap-2"><Sparkles className="h-5 w-5 text-gold-deep" /> Next up for you</h2>
+          <h2 className="font-display text-xl mb-4 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-gold-deep" /> {t("dash.nextup")}
+          </h2>
           {recommendations.length === 0 ? (
             <div className="bg-card border border-border rounded-2xl p-6 text-sm text-muted-foreground shadow-card">
-              {enrollments.length === 0
-                ? "Enroll in a course to see personalized lesson recommendations."
-                : "MāshāʾAllāh — you've completed every lesson available. New material coming soon!"}
+              {enrollments.length === 0 ? t("dash.nextup.none.empty") : t("dash.nextup.none.done")}
             </div>
           ) : (
             <div className="grid md:grid-cols-3 gap-4">
               {recommendations.map(({ lesson, course }) => (
                 <article key={lesson.id} className="bg-card border border-border rounded-2xl p-5 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-1">{course?.title}</p>
-                  <h3 className="font-display text-lg mb-1">Lesson {lesson.order_index}: {lesson.title}</h3>
+                  <h3 className="font-display text-lg mb-1">{t("dash.lesson")} {lesson.order_index}: {lesson.title}</h3>
                   <p className="text-xs text-muted-foreground flex-1">{lesson.summary}</p>
                   <div className="flex items-center justify-between mt-4">
-                    <span className="text-xs text-muted-foreground">{lesson.duration_min} min</span>
+                    <span className="text-xs text-muted-foreground">{lesson.duration_min} {t("dash.minutes")}</span>
                     <Button size="sm" variant="gold" onClick={() => onToggleLesson(lesson.id, false)}>
-                      <PlayCircle className="h-4 w-4" /> Start
+                      <PlayCircle className="h-4 w-4" /> {t("dash.start")}
                     </Button>
                   </div>
                 </article>
@@ -268,14 +280,14 @@ const Dashboard = () => {
           )}
         </section>
 
-        {/* My Courses with progress */}
+        {/* My Courses */}
         <section>
-          <h2 className="font-display text-xl mb-4">My Courses</h2>
+          <h2 className="font-display text-xl mb-4">{t("dash.mycourses")}</h2>
           {enrollments.length === 0 ? (
             <div className="bg-card border border-border rounded-2xl p-10 text-center shadow-card">
               <BookOpen className="h-10 w-10 mx-auto text-gold-deep mb-3" />
-              <p className="text-muted-foreground mb-4">You haven't enrolled in any courses yet.</p>
-              <Button variant="gold" asChild><Link to="/enroll">Browse Courses</Link></Button>
+              <p className="text-muted-foreground mb-4">{t("dash.empty.title")}</p>
+              <Button variant="gold" asChild><Link to="/enroll">{t("dash.browse")}</Link></Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -293,15 +305,15 @@ const Dashboard = () => {
                             en.status === "active" ? "bg-emerald/15 text-emerald" :
                             en.status === "pending" ? "bg-gold/15 text-gold-deep" :
                             "bg-muted text-muted-foreground"
-                          }`}>{en.status}</span>
+                          }`}>{statusLabel(en.status)}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {en.plan} plan · {en.courses?.duration} · <span className="capitalize">{en.courses?.level}</span> · enrolled {new Date(en.created_at).toLocaleDateString()}
+                          {en.plan} {t("dash.plan")} · {en.courses?.duration} · <span className="capitalize">{en.courses?.level}</span> · {t("dash.enrolled")} {new Date(en.created_at).toLocaleDateString(locale)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-display text-2xl text-foreground">{pct}%</p>
-                        <p className="text-xs text-muted-foreground">{done}/{courseLessons.length} lessons</p>
+                        <p className="text-xs text-muted-foreground">{done}/{courseLessons.length} {t("dash.lessons.count")}</p>
                       </div>
                     </div>
                     <Progress value={pct} className="h-2 mb-4" />
@@ -325,7 +337,7 @@ const Dashboard = () => {
                               </p>
                               <p className="text-xs text-muted-foreground truncate">{l.summary}</p>
                             </div>
-                            <span className="text-xs text-muted-foreground shrink-0">{l.duration_min}m</span>
+                            <span className="text-xs text-muted-foreground shrink-0">{l.duration_min}{t("dash.minutes") === "min" ? "m" : ` ${t("dash.minutes")}`}</span>
                           </li>
                         );
                       })}
