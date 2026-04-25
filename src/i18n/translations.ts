@@ -561,6 +561,22 @@ export const translations = {
     "teacher.notfound.title": "المعلم غير موجود",
     "teacher.notfound.desc": "ليس لديك صلاحية الوصول إلى ملف هذا المعلم.",
     "teacher.view": "عرض الملف",
+
+    "req.button": "اطلب موعدًا",
+    "req.title": "طلب موعد حصة",
+    "req.desc": "اختر التاريخ والوقت المفضل. سيؤكد معلمك الموعد.",
+    "req.date": "التاريخ المفضل",
+    "req.date.pick": "اختر تاريخًا",
+    "req.time": "الوقت المفضل",
+    "req.duration": "المدة (دقائق)",
+    "req.note": "ملاحظة لمعلمك (اختياري)",
+    "req.note.ph": "هل هناك شيء محدد تود التركيز عليه؟",
+    "req.cancel": "إلغاء",
+    "req.submit": "إرسال الطلب",
+    "req.submitting": "جارٍ الإرسال…",
+    "req.success": "تم إرسال الطلب. سيؤكد معلمك قريبًا.",
+    "req.error": "تعذّر إرسال الطلب. حاول مرة أخرى.",
+    "req.validation": "يرجى اختيار التاريخ والوقت.",
   },
 } as const;
 
