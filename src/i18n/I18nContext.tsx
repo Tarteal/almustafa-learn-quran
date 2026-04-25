@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { translations, TranslationKey } from "./translations";
 
-export type Lang = "en" | "ur" | "ar";
+export type Lang = "en" | "ar";
 
 export const LANGS: { code: Lang; label: string; native: string; dir: "ltr" | "rtl" }[] = [
   { code: "en", label: "English", native: "English", dir: "ltr" },
-  { code: "ur", label: "Urdu", native: "اردو", dir: "rtl" },
   { code: "ar", label: "Arabic", native: "العربية", dir: "rtl" },
 ];
 
@@ -22,7 +21,7 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState<Lang>(() => {
     if (typeof window === "undefined") return "en";
     const stored = localStorage.getItem("lang") as Lang | null;
-    return stored && ["en", "ur", "ar"].includes(stored) ? stored : "en";
+    return stored && ["en", "ar"].includes(stored) ? stored : "en";
   });
 
   const dir = LANGS.find((l) => l.code === lang)?.dir ?? "ltr";
