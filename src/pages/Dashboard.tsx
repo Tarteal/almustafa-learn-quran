@@ -140,7 +140,107 @@ const Dashboard = () => {
           <StatCard icon={Sparkles} label="Overall Progress" value={`${stats.pct}%`} accent="gold" />
         </section>
 
-        {/* Next Lesson Recommendations */}
+        {/* Assigned Teachers */}
+        {enrollments.length > 0 && (
+          <section className="mb-10">
+            <h2 className="font-display text-xl mb-4 flex items-center gap-2">
+              <GraduationCap className="h-5 w-5 text-gold-deep" /> Your Assigned Teachers
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {enrollments.map((en) => {
+                const assignment = assignments.find((a) => a.enrollment_id === en.id);
+                const teacher = assignment?.teachers;
+                const upcoming = classes
+                  .filter((c) => c.enrollment_id === en.id)
+                  .slice(0, 3);
+                return (
+                  <article key={en.id} className="bg-card border border-border rounded-2xl p-6 shadow-card hover:shadow-elegant transition-smooth">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-3">{en.courses?.title}</p>
+                    {teacher ? (
+                      <>
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className="h-14 w-14 rounded-full gradient-emerald grid place-items-center shrink-0 shadow-elegant ring-1 ring-gold/40">
+                            {teacher.avatar_url ? (
+                              <img src={teacher.avatar_url} alt={teacher.full_name} className="h-full w-full rounded-full object-cover" />
+                            ) : (
+                              <span className="font-display text-gold text-lg">
+                                {teacher.full_name.split(" ").slice(-1)[0]?.[0] || "T"}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-display text-lg">{teacher.full_name}</h3>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-0.5">
+                              {teacher.specialization && <span>{teacher.specialization}</span>}
+                              {teacher.country && (
+                                <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {teacher.country}</span>
+                              )}
+                            </div>
+                            {teacher.bio && (
+                              <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{teacher.bio}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {teacher.email && (
+                            <Button variant="ghost" size="sm" asChild>
+                              <a href={`mailto:${teacher.email}`}><Mail className="h-4 w-4" /> Email</a>
+                            </Button>
+                          )}
+                          {teacher.whatsapp && (
+                            <Button variant="ghost" size="sm" asChild>
+                              <a href={`https://wa.me/${teacher.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer">
+                                <MessageCircle className="h-4 w-4" /> WhatsApp
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="border-t border-border pt-4">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5" /> Upcoming Classes
+                          </p>
+                          {upcoming.length === 0 ? (
+                            <p className="text-xs text-muted-foreground">No classes scheduled yet. Your teacher will reach out soon.</p>
+                          ) : (
+                            <ul className="space-y-2">
+                              {upcoming.map((c) => {
+                                const d = new Date(c.starts_at);
+                                return (
+                                  <li key={c.id} className="flex items-center justify-between gap-3 text-sm">
+                                    <div>
+                                      <p className="font-medium text-foreground">
+                                        {d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} min
+                                      </p>
+                                    </div>
+                                    {c.meeting_url && (
+                                      <Button size="sm" variant="gold" asChild>
+                                        <a href={c.meeting_url} target="_blank" rel="noreferrer">
+                                          <Video className="h-4 w-4" /> Join
+                                        </a>
+                                      </Button>
+                                    )}
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">A teacher will be assigned to you shortly, in shaa Allah.</p>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         <section className="mb-10">
           <h2 className="font-display text-xl mb-4 flex items-center gap-2"><Sparkles className="h-5 w-5 text-gold-deep" /> Next up for you</h2>
           {recommendations.length === 0 ? (
