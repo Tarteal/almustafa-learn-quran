@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      classes: {
+        Row: {
+          created_at: string
+          duration_min: number
+          enrollment_id: string
+          id: string
+          meeting_url: string | null
+          starts_at: string
+          status: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_min?: number
+          enrollment_id: string
+          id?: string
+          meeting_url?: string | null
+          starts_at: string
+          status?: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_min?: number
+          enrollment_id?: string
+          id?: string
+          meeting_url?: string | null
+          starts_at?: string
+          status?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           created_at: string
@@ -49,6 +97,39 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      enrollment_teachers: {
+        Row: {
+          assigned_at: string
+          enrollment_id: string
+          teacher_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          enrollment_id: string
+          teacher_id: string
+        }
+        Update: {
+          assigned_at?: string
+          enrollment_id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollment_teachers_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: true
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollment_teachers_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       enrollments: {
         Row: {
@@ -173,6 +254,42 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      teachers: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          specialization: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          specialization?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          specialization?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
