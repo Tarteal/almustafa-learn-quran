@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import { useI18n } from "@/i18n/I18nContext";
 import LangSwitcher from "@/components/site/LangSwitcher";
+import RequestSlotDialog from "@/components/dashboard/RequestSlotDialog";
 
 type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
 type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
