@@ -131,7 +131,7 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-4 bg-background">
+    <main className="surface-dark min-h-screen pt-28 pb-20 px-4">
       <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
