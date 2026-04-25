@@ -131,4 +131,12 @@
   }
 
   html { scroll-behavior: smooth; }
+
+  /* RTL: mirror directional icons (arrows) and use Amiri for body text */
+  html[dir="rtl"] body {
+    font-family: 'Amiri', 'Inter', system-ui, sans-serif;
+  }
+  html[dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
 }
