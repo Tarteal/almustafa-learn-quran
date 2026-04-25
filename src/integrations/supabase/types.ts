@@ -257,6 +257,44 @@ export type Database = {
         }
         Relationships: []
       }
+      teacher_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          start_time: string
+          teacher_id: string
+          timezone: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          start_time: string
+          teacher_id: string
+          timezone?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          start_time?: string
+          teacher_id?: string
+          timezone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_availability_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teachers: {
         Row: {
           avatar_url: string | null
@@ -267,7 +305,9 @@ export type Database = {
           full_name: string
           id: string
           specialization: string | null
+          topics: string[]
           whatsapp: string | null
+          years_experience: number | null
         }
         Insert: {
           avatar_url?: string | null
@@ -278,7 +318,9 @@ export type Database = {
           full_name: string
           id?: string
           specialization?: string | null
+          topics?: string[]
           whatsapp?: string | null
+          years_experience?: number | null
         }
         Update: {
           avatar_url?: string | null
@@ -289,7 +331,9 @@ export type Database = {
           full_name?: string
           id?: string
           specialization?: string | null
+          topics?: string[]
           whatsapp?: string | null
+          years_experience?: number | null
         }
         Relationships: []
       }
