@@ -180,7 +180,11 @@ const Dashboard = () => {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-display text-lg">{teacher.full_name}</h3>
+                            <h3 className="font-display text-lg">
+                              <Link to={`/teacher/${teacher.id}`} className="hover:text-primary transition-smooth">
+                                {teacher.full_name}
+                              </Link>
+                            </h3>
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-0.5">
                               {teacher.specialization && <span>{teacher.specialization}</span>}
                               {teacher.country && (
