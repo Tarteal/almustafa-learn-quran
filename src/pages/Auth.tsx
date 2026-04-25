@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
+import SurfaceThemeToggle, { useSurfaceTheme } from "@/components/SurfaceThemeToggle";
 
 const signUpSchema = z.object({
   full_name: z.string().trim().min(2, "Name is required").max(100),
