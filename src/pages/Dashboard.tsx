@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Loader2, BookOpen, LogOut, Plus } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame } from "lucide-react";
+import { toast } from "sonner";
 import SEO from "@/components/SEO";
 
-type Enrollment = {
-  id: string;
-  plan: string;
-  status: string;
-  created_at: string;
-  courses: { title: string; slug: string; duration: string | null; level: string | null } | null;
-};
+type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
+type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
+type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number };
 
 const Dashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,22 +25,73 @@ const Dashboard = () => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
   }, [user, authLoading, navigate]);
 
-  useEffect(() => {
+  const load = async () => {
     if (!user) return;
-    Promise.all([
+    const [pRes, eRes, prRes] = await Promise.all([
       supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
-      supabase.from("enrollments").select("id, plan, status, created_at, courses(title, slug, duration, level)").order("created_at", { ascending: false }),
-    ]).then(([p, e]) => {
-      setProfile(p.data as any);
-      setEnrollments((e.data as any) || []);
-      setLoading(false);
-    });
-  }, [user]);
+      supabase
+        .from("enrollments")
+        .select("id, plan, status, created_at, course_id, courses(id, title, slug, duration, level)")
+        .order("created_at", { ascending: false }),
+      supabase.from("lesson_progress").select("lesson_id"),
+    ]);
 
-  const onSignOut = async () => {
-    await signOut();
-    navigate("/");
+    setProfile(pRes.data as any);
+    const enr = ((eRes.data as any) || []) as Enrollment[];
+    setEnrollments(enr);
+
+    const courseIds = enr.map((e) => e.course_id);
+    if (courseIds.length) {
+      const { data: ls } = await supabase
+        .from("lessons")
+        .select("id, course_id, title, summary, order_index, duration_min")
+        .in("course_id", courseIds)
+        .order("order_index");
+      setLessons((ls as Lesson[]) || []);
+    } else {
+      setLessons([]);
+    }
+    setCompletedIds(new Set(((prRes.data as any) || []).map((r: any) => r.lesson_id)));
+    setLoading(false);
   };
+
+  useEffect(() => { if (user) load(); }, [user]);
+
+  const stats = useMemo(() => {
+    const totalLessons = lessons.length;
+    const completed = lessons.filter((l) => completedIds.has(l.id)).length;
+    const pct = totalLessons ? Math.round((completed / totalLessons) * 100) : 0;
+    const minutes = lessons
+      .filter((l) => completedIds.has(l.id))
+      .reduce((s, l) => s + l.duration_min, 0);
+    return { totalLessons, completed, pct, minutes };
+  }, [lessons, completedIds]);
+
+  const recommendations = useMemo(() => {
+    const recs: { lesson: Lesson; course: Course | undefined }[] = [];
+    for (const en of enrollments) {
+      const courseLessons = lessons.filter((l) => l.course_id === en.course_id);
+      const next = courseLessons.find((l) => !completedIds.has(l.id));
+      if (next) recs.push({ lesson: next, course: en.courses ?? undefined });
+    }
+    return recs.slice(0, 3);
+  }, [enrollments, lessons, completedIds]);
+
+  const onToggleLesson = async (lessonId: string, done: boolean) => {
+    if (!user) return;
+    if (done) {
+      setCompletedIds((s) => { const n = new Set(s); n.delete(lessonId); return n; });
+      const { error } = await supabase.from("lesson_progress").delete().eq("lesson_id", lessonId).eq("user_id", user.id);
+      if (error) { toast.error(error.message); load(); }
+    } else {
+      setCompletedIds((s) => new Set(s).add(lessonId));
+      const { error } = await supabase.from("lesson_progress").insert({ user_id: user.id, lesson_id: lessonId });
+      if (error) { toast.error(error.message); load(); }
+      else toast.success("Lesson marked complete. BarakAllāhu fīk!");
+    }
+  };
+
+  const onSignOut = async () => { await signOut(); navigate("/"); };
 
   if (authLoading || loading) {
     return <div className="min-h-screen grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
@@ -48,8 +99,8 @@ const Dashboard = () => {
 
   return (
     <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-overlay">
-      <SEO title="My Dashboard · Almustafa Quran Academy" description="View your enrolled Quran courses and learning progress." />
-      <div className="container max-w-5xl">
+      <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
+      <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1">Student Dashboard</p>
@@ -61,6 +112,43 @@ const Dashboard = () => {
           </div>
         </header>
 
+        {/* Stats */}
+        <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard icon={BookOpen} label="Enrolled Courses" value={enrollments.length} accent="emerald" />
+          <StatCard icon={Trophy} label="Lessons Completed" value={`${stats.completed}/${stats.totalLessons || 0}`} accent="gold" />
+          <StatCard icon={Flame} label="Minutes Studied" value={stats.minutes} accent="emerald" />
+          <StatCard icon={Sparkles} label="Overall Progress" value={`${stats.pct}%`} accent="gold" />
+        </section>
+
+        {/* Next Lesson Recommendations */}
+        <section className="mb-10">
+          <h2 className="font-display text-xl mb-4 flex items-center gap-2"><Sparkles className="h-5 w-5 text-gold-deep" /> Next up for you</h2>
+          {recommendations.length === 0 ? (
+            <div className="bg-card border border-border rounded-2xl p-6 text-sm text-muted-foreground shadow-card">
+              {enrollments.length === 0
+                ? "Enroll in a course to see personalized lesson recommendations."
+                : "MāshāʾAllāh — you've completed every lesson available. New material coming soon!"}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-4">
+              {recommendations.map(({ lesson, course }) => (
+                <article key={lesson.id} className="bg-card border border-border rounded-2xl p-5 shadow-card hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-1">{course?.title}</p>
+                  <h3 className="font-display text-lg mb-1">Lesson {lesson.order_index}: {lesson.title}</h3>
+                  <p className="text-xs text-muted-foreground flex-1">{lesson.summary}</p>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-xs text-muted-foreground">{lesson.duration_min} min</span>
+                    <Button size="sm" variant="gold" onClick={() => onToggleLesson(lesson.id, false)}>
+                      <PlayCircle className="h-4 w-4" /> Start
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* My Courses with progress */}
         <section>
           <h2 className="font-display text-xl mb-4">My Courses</h2>
           {enrollments.length === 0 ? (
@@ -70,25 +158,61 @@ const Dashboard = () => {
               <Button variant="gold" asChild><Link to="/enroll">Browse Courses</Link></Button>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
-              {enrollments.map((en) => (
-                <article key={en.id} className="bg-card border border-border rounded-2xl p-6 shadow-card hover:shadow-elegant transition-smooth">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-display text-lg">{en.courses?.title}</h3>
-                    <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-full ${
-                      en.status === "active" ? "bg-emerald/15 text-emerald" :
-                      en.status === "pending" ? "bg-gold/15 text-gold-deep" :
-                      "bg-muted text-muted-foreground"
-                    }`}>{en.status}</span>
-                  </div>
-                  <div className="flex gap-3 text-xs text-muted-foreground mb-4">
-                    {en.courses?.duration && <span>{en.courses.duration}</span>}
-                    {en.courses?.level && <span className="capitalize">· {en.courses.level}</span>}
-                    <span>· {en.plan} plan</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Enrolled {new Date(en.created_at).toLocaleDateString()}</p>
-                </article>
-              ))}
+            <div className="space-y-4">
+              {enrollments.map((en) => {
+                const courseLessons = lessons.filter((l) => l.course_id === en.course_id);
+                const done = courseLessons.filter((l) => completedIds.has(l.id)).length;
+                const pct = courseLessons.length ? Math.round((done / courseLessons.length) * 100) : 0;
+                return (
+                  <article key={en.id} className="bg-card border border-border rounded-2xl p-6 shadow-card">
+                    <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-display text-lg">{en.courses?.title}</h3>
+                          <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                            en.status === "active" ? "bg-emerald/15 text-emerald" :
+                            en.status === "pending" ? "bg-gold/15 text-gold-deep" :
+                            "bg-muted text-muted-foreground"
+                          }`}>{en.status}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {en.plan} plan · {en.courses?.duration} · <span className="capitalize">{en.courses?.level}</span> · enrolled {new Date(en.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-display text-2xl text-foreground">{pct}%</p>
+                        <p className="text-xs text-muted-foreground">{done}/{courseLessons.length} lessons</p>
+                      </div>
+                    </div>
+                    <Progress value={pct} className="h-2 mb-4" />
+                    <ul className="divide-y divide-border">
+                      {courseLessons.map((l) => {
+                        const isDone = completedIds.has(l.id);
+                        return (
+                          <li key={l.id} className="flex items-center gap-3 py-3">
+                            <button
+                              onClick={() => onToggleLesson(l.id, isDone)}
+                              className={`h-6 w-6 rounded-full grid place-items-center border transition-smooth shrink-0 ${
+                                isDone ? "bg-emerald border-emerald text-background" : "border-border hover:border-gold"
+                              }`}
+                              aria-label={isDone ? "Mark incomplete" : "Mark complete"}
+                            >
+                              {isDone && <Check className="h-3.5 w-3.5" />}
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm ${isDone ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                                <span className="text-muted-foreground mr-2">{l.order_index}.</span>{l.title}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">{l.summary}</p>
+                            </div>
+                            <span className="text-xs text-muted-foreground shrink-0">{l.duration_min}m</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
@@ -96,5 +220,19 @@ const Dashboard = () => {
     </main>
   );
 };
+
+const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string | number; accent: "emerald" | "gold" }) => (
+  <div className="bg-card border border-border rounded-2xl p-5 shadow-card">
+    <div className="flex items-center gap-3">
+      <div className={`h-10 w-10 rounded-xl grid place-items-center ${accent === "gold" ? "bg-gold/15 text-gold-deep" : "bg-emerald/15 text-emerald"}`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div>
+        <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
+        <p className="font-display text-2xl">{value}</p>
+      </div>
+    </div>
+  </div>
+);
 
 export default Dashboard;
