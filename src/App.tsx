@@ -10,6 +10,7 @@ import BlogPost from "./pages/BlogPost.tsx";
 import Auth from "./pages/Auth.tsx";
 import Enroll from "./pages/Enroll.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import TeacherProfile from "./pages/TeacherProfile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/enroll" element={<Enroll />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/teacher/:teacherId" element={<TeacherProfile />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
