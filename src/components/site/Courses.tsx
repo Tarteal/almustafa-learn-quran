@@ -1,16 +1,17 @@
 import SectionHeading from "./SectionHeading";
 import { Button } from "@/components/ui/button";
 import { BookOpen, BookMarked, Mic, Brain, ScrollText, ArrowRight, Clock, Signal } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/I18nContext";
 
 const Courses = () => {
   const { t } = useI18n();
   const courses = [
-    { icon: BookOpen, title: t("courses.noorani.t"), desc: t("courses.noorani.d"), duration: "2–4 mo", level: t("courses.level.beginner"), color: "from-emerald-deep to-emerald" },
-    { icon: BookMarked, title: t("courses.reading.t"), desc: t("courses.reading.d"), duration: "6–12 mo", level: t("courses.level.beginner"), color: "from-emerald to-emerald-soft" },
-    { icon: Mic, title: t("courses.tajweed.t"), desc: t("courses.tajweed.d"), duration: "8–14 mo", level: t("courses.level.intermediate"), color: "from-gold-deep to-gold" },
-    { icon: Brain, title: t("courses.hifz.t"), desc: t("courses.hifz.d"), duration: "3–5 yr", level: t("courses.level.advanced"), color: "from-emerald-deep to-gold-deep" },
-    { icon: ScrollText, title: t("courses.tafseer.t"), desc: t("courses.tafseer.d"), duration: "12+ mo", level: t("courses.level.advanced"), color: "from-gold to-gold-light" },
+    { slug: "noorani-qaida", icon: BookOpen, title: t("courses.noorani.t"), desc: t("courses.noorani.d"), duration: "2–4 mo", level: t("courses.level.beginner"), color: "from-emerald-deep to-emerald" },
+    { slug: "quran-reading", icon: BookMarked, title: t("courses.reading.t"), desc: t("courses.reading.d"), duration: "6–12 mo", level: t("courses.level.beginner"), color: "from-emerald to-emerald-soft" },
+    { slug: "tajweed", icon: Mic, title: t("courses.tajweed.t"), desc: t("courses.tajweed.d"), duration: "8–14 mo", level: t("courses.level.intermediate"), color: "from-gold-deep to-gold" },
+    { slug: "hifz", icon: Brain, title: t("courses.hifz.t"), desc: t("courses.hifz.d"), duration: "3–5 yr", level: t("courses.level.advanced"), color: "from-emerald-deep to-gold-deep" },
+    { slug: "tafseer", icon: ScrollText, title: t("courses.tafseer.t"), desc: t("courses.tafseer.d"), duration: "12+ mo", level: t("courses.level.advanced"), color: "from-gold to-gold-light" },
   ];
 
   return (
@@ -53,10 +54,10 @@ const Courses = () => {
               </div>
 
               <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:bg-transparent" asChild>
-                <a href="#pricing">
+                <Link to={`/enroll?course=${c.slug}`}>
                   {t("courses.enroll")}
                   <ArrowRight className="h-4 w-4 rtl-flip group-hover/btn:translate-x-1 transition-smooth" />
-                </a>
+                </Link>
               </Button>
             </article>
           ))}

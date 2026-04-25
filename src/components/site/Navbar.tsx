@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/I18nContext";
+import { useAuth } from "@/auth/AuthContext";
 import LangSwitcher from "./LangSwitcher";
 
 const Navbar = () => {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -59,12 +62,25 @@ const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-3">
           <LangSwitcher />
-          <Button variant="ghost" size="sm" asChild>
-            <a href="#contact">{t("nav.signin")}</a>
-          </Button>
-          <Button variant="gold" size="sm" asChild>
-            <a href="#pricing">{t("nav.trial")}</a>
-          </Button>
+          {user ? (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/dashboard"><LayoutDashboard className="h-4 w-4" /> Dashboard</Link>
+              </Button>
+              <Button variant="gold" size="sm" asChild>
+                <Link to="/enroll">Enroll</Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/auth?mode=signin">{t("nav.signin")}</Link>
+              </Button>
+              <Button variant="gold" size="sm" asChild>
+                <Link to="/enroll">Enroll</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <div className="lg:hidden flex items-center gap-2">
@@ -93,8 +109,17 @@ const Navbar = () => {
               </a>
             ))}
             <Button variant="gold" className="mt-2" asChild>
-              <a href="#pricing" onClick={() => setOpen(false)}>{t("hero.cta.trial")}</a>
+              <Link to="/enroll" onClick={() => setOpen(false)}>Enroll Now</Link>
             </Button>
+            {user ? (
+              <Button variant="ghost" asChild>
+                <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+              </Button>
+            ) : (
+              <Button variant="ghost" asChild>
+                <Link to="/auth?mode=signin" onClick={() => setOpen(false)}>{t("nav.signin")}</Link>
+              </Button>
+            )}
           </div>
         </div>
       )}
