@@ -46,15 +46,30 @@ const Dashboard = () => {
     setEnrollments(enr);
 
     const courseIds = enr.map((e) => e.course_id);
+    const enrollmentIds = enr.map((e) => e.id);
     if (courseIds.length) {
-      const { data: ls } = await supabase
-        .from("lessons")
-        .select("id, course_id, title, summary, order_index, duration_min")
-        .in("course_id", courseIds)
-        .order("order_index");
-      setLessons((ls as Lesson[]) || []);
+      const [lsRes, atRes, clRes] = await Promise.all([
+        supabase
+          .from("lessons")
+          .select("id, course_id, title, summary, order_index, duration_min")
+          .in("course_id", courseIds)
+          .order("order_index"),
+        supabase
+          .from("enrollment_teachers")
+          .select("enrollment_id, teacher_id, teachers(id, full_name, bio, country, specialization, email, whatsapp, avatar_url)")
+          .in("enrollment_id", enrollmentIds),
+        supabase
+          .from("classes")
+          .select("id, enrollment_id, teacher_id, starts_at, duration_min, meeting_url, status")
+          .in("enrollment_id", enrollmentIds)
+          .gte("starts_at", new Date().toISOString())
+          .order("starts_at"),
+      ]);
+      setLessons((lsRes.data as Lesson[]) || []);
+      setAssignments((atRes.data as any) || []);
+      setClasses((clRes.data as ClassRow[]) || []);
     } else {
-      setLessons([]);
+      setLessons([]); setAssignments([]); setClasses([]);
     }
     setCompletedIds(new Set(((prRes.data as any) || []).map((r: any) => r.lesson_id)));
     setLoading(false);
