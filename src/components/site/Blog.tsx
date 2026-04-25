@@ -1,5 +1,6 @@
 import SectionHeading from "./SectionHeading";
 import { ArrowUpRight, Calendar } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
 
 const posts = [
   {
@@ -26,13 +27,19 @@ const posts = [
 ];
 
 const Blog = () => {
+  const { t } = useI18n();
   return (
     <section id="blog" className="relative py-24 md:py-32">
       <div className="container relative">
         <SectionHeading
-          eyebrow="From the Blog"
-          title={<>Wisdom & guidance for the <em className="text-gradient-gold not-italic font-display">seeker</em></>}
-          description="Articles on Quran learning, Islamic parenting, and spiritual growth — written by our scholars."
+          eyebrow={t("blog.eyebrow")}
+          title={
+            <>
+              {t("blog.title.a")}{" "}
+              <em className="text-gradient-gold not-italic font-display">{t("blog.title.b")}</em>
+            </>
+          }
+          description={t("blog.desc")}
         />
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -46,9 +53,7 @@ const Blog = () => {
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/95 text-xs font-semibold text-primary uppercase tracking-wider">
                   {p.cat}
                 </div>
-                <div className="absolute bottom-4 left-4 font-arabic text-5xl text-background/30">
-                  ﷽
-                </div>
+                <div className="absolute bottom-4 left-4 font-arabic text-5xl text-background/30">﷽</div>
               </div>
 
               <div className="p-6">
@@ -60,7 +65,7 @@ const Blog = () => {
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4">{p.excerpt}</p>
                 <a href="#" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-smooth">
-                  Read article <ArrowUpRight className="h-4 w-4" />
+                  {t("blog.read")} <ArrowUpRight className="h-4 w-4 rtl-flip" />
                 </a>
               </div>
             </article>

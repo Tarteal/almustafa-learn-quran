@@ -1,40 +1,47 @@
 import SectionHeading from "./SectionHeading";
 import { Button } from "@/components/ui/button";
 import { Check, Star } from "lucide-react";
-
-const plans = [
-  {
-    name: "Basic",
-    price: 45,
-    desc: "Perfect for beginners getting started",
-    features: ["2 classes per week", "30 minutes per class", "1-on-1 with teacher", "Progress reports", "Email support"],
-    popular: false,
-  },
-  {
-    name: "Standard",
-    price: 75,
-    desc: "Most popular — balanced & effective",
-    features: ["3 classes per week", "45 minutes per class", "1-on-1 with teacher", "Weekly assessments", "Free study materials", "Priority support"],
-    popular: true,
-  },
-  {
-    name: "Premium",
-    price: 120,
-    desc: "Intensive learning for fast results",
-    features: ["5 classes per week", "60 minutes per class", "Choose your teacher", "Monthly Ijazah review", "Tafseer included", "Hifz tracking", "24/7 priority support"],
-    popular: false,
-  },
-];
+import { useI18n } from "@/i18n/I18nContext";
 
 const Pricing = () => {
+  const { t } = useI18n();
+  const plans = [
+    {
+      name: t("pricing.basic.name"),
+      price: 45,
+      desc: t("pricing.basic.desc"),
+      features: ["2 classes/week", "30 min/class", "1-on-1 teacher", "Progress reports", "Email support"],
+      popular: false,
+    },
+    {
+      name: t("pricing.standard.name"),
+      price: 75,
+      desc: t("pricing.standard.desc"),
+      features: ["3 classes/week", "45 min/class", "1-on-1 teacher", "Weekly assessments", "Free study materials", "Priority support"],
+      popular: true,
+    },
+    {
+      name: t("pricing.premium.name"),
+      price: 120,
+      desc: t("pricing.premium.desc"),
+      features: ["5 classes/week", "60 min/class", "Choose your teacher", "Monthly Ijazah review", "Tafseer included", "Hifz tracking", "24/7 priority support"],
+      popular: false,
+    },
+  ];
+
   return (
     <section id="pricing" className="relative py-24 md:py-32">
       <div className="absolute inset-0 pattern-overlay" />
       <div className="container relative">
         <SectionHeading
-          eyebrow="Pricing & Packages"
-          title={<>Simple, transparent <em className="text-gradient-gold not-italic font-display">pricing</em></>}
-          description="Start with a free 3-day trial — no card required. Cancel anytime, no hidden fees."
+          eyebrow={t("pricing.eyebrow")}
+          title={
+            <>
+              {t("pricing.title.a")}{" "}
+              <em className="text-gradient-gold not-italic font-display">{t("pricing.title.b")}</em>
+            </>
+          }
+          description={t("pricing.desc")}
         />
 
         <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
@@ -48,8 +55,8 @@ const Pricing = () => {
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 gradient-gold text-emerald-deep text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full shadow-gold">
-                  <Star className="h-3 w-3 fill-current" /> Most Popular
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 gradient-gold text-emerald-deep text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full shadow-gold whitespace-nowrap">
+                  <Star className="h-3 w-3 fill-current" /> {t("pricing.popular")}
                 </div>
               )}
 
@@ -60,7 +67,7 @@ const Pricing = () => {
 
               <div className="mb-8">
                 <span className="font-display text-5xl font-semibold">${plan.price}</span>
-                <span className={`text-sm ml-1 ${plan.popular ? "text-background/60" : "text-muted-foreground"}`}>/month</span>
+                <span className={`text-sm ml-1 ${plan.popular ? "text-background/60" : "text-muted-foreground"}`}>{t("pricing.month")}</span>
               </div>
 
               <ul className="space-y-3 mb-8">
@@ -81,14 +88,14 @@ const Pricing = () => {
                 size="lg"
                 className="w-full"
               >
-                Subscribe Now
+                {t("pricing.subscribe")}
               </Button>
             </div>
           ))}
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-10">
-          🔒 Secure payments · 💯 30-day money-back guarantee · 🎁 First 3 days free
+          {t("pricing.guarantees")}
         </p>
       </div>
     </section>

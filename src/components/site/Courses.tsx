@@ -1,68 +1,39 @@
 import SectionHeading from "./SectionHeading";
 import { Button } from "@/components/ui/button";
 import { BookOpen, BookMarked, Mic, Brain, ScrollText, ArrowRight, Clock, Signal } from "lucide-react";
-
-const courses = [
-  {
-    icon: BookOpen,
-    title: "Noorani Qaida",
-    desc: "Master Arabic letters, pronunciation, and basic rules — the foundation for every Quran reader.",
-    duration: "2–4 months",
-    level: "Beginner",
-    color: "from-emerald-deep to-emerald",
-  },
-  {
-    icon: BookMarked,
-    title: "Quran Reading (Nazra)",
-    desc: "Learn to read the Quran fluently with correct pronunciation, building confidence verse by verse.",
-    duration: "6–12 months",
-    level: "Beginner",
-    color: "from-emerald to-emerald-soft",
-  },
-  {
-    icon: Mic,
-    title: "Tajweed Course",
-    desc: "Perfect the rules of recitation — Madd, Ghunna, Idgham, and more — for beautiful, accurate reading.",
-    duration: "8–14 months",
-    level: "Intermediate",
-    color: "from-gold-deep to-gold",
-  },
-  {
-    icon: Brain,
-    title: "Hifz Program",
-    desc: "Memorize the entire Quran with our structured plan, daily revision, and dedicated Hafiz mentors.",
-    duration: "3–5 years",
-    level: "Advanced",
-    color: "from-emerald-deep to-gold-deep",
-  },
-  {
-    icon: ScrollText,
-    title: "Tafseer Course",
-    desc: "Understand the meaning, context, and lessons of the Quran with classical and contemporary scholarship.",
-    duration: "12+ months",
-    level: "Advanced",
-    color: "from-gold to-gold-light",
-  },
-];
+import { useI18n } from "@/i18n/I18nContext";
 
 const Courses = () => {
+  const { t } = useI18n();
+  const courses = [
+    { icon: BookOpen, title: t("courses.noorani.t"), desc: t("courses.noorani.d"), duration: "2–4 mo", level: t("courses.level.beginner"), color: "from-emerald-deep to-emerald" },
+    { icon: BookMarked, title: t("courses.reading.t"), desc: t("courses.reading.d"), duration: "6–12 mo", level: t("courses.level.beginner"), color: "from-emerald to-emerald-soft" },
+    { icon: Mic, title: t("courses.tajweed.t"), desc: t("courses.tajweed.d"), duration: "8–14 mo", level: t("courses.level.intermediate"), color: "from-gold-deep to-gold" },
+    { icon: Brain, title: t("courses.hifz.t"), desc: t("courses.hifz.d"), duration: "3–5 yr", level: t("courses.level.advanced"), color: "from-emerald-deep to-gold-deep" },
+    { icon: ScrollText, title: t("courses.tafseer.t"), desc: t("courses.tafseer.d"), duration: "12+ mo", level: t("courses.level.advanced"), color: "from-gold to-gold-light" },
+  ];
+
   return (
     <section id="courses" className="relative py-24 md:py-32 bg-secondary/40">
       <div className="container relative">
         <SectionHeading
-          eyebrow="Our Courses"
-          title={<>A path for <em className="text-gradient-gold not-italic font-display">every</em> stage of your journey</>}
-          description="From your very first letter to mastering Tafseer — choose the program that meets you where you are."
+          eyebrow={t("courses.eyebrow")}
+          title={
+            <>
+              {t("courses.title.a")}{" "}
+              <em className="text-gradient-gold not-italic font-display">{t("courses.title.b")}</em>{" "}
+              {t("courses.title.c")}
+            </>
+          }
+          description={t("courses.desc")}
         />
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((c, i) => (
+          {courses.map((c) => (
             <article
               key={c.title}
               className="group relative bg-card rounded-2xl p-7 border border-border hover:border-gold/50 transition-smooth hover:-translate-y-2 hover:shadow-elegant overflow-hidden"
-              style={{ animationDelay: `${i * 80}ms` }}
             >
-              {/* Gradient corner */}
               <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gradient-to-br ${c.color} opacity-10 blur-2xl group-hover:opacity-30 transition-smooth`} />
 
               <div className={`relative h-14 w-14 rounded-xl bg-gradient-to-br ${c.color} grid place-items-center mb-5 shadow-card group-hover:scale-110 group-hover:rotate-3 transition-bounce`}>
@@ -83,23 +54,22 @@ const Courses = () => {
 
               <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:bg-transparent" asChild>
                 <a href="#pricing">
-                  Enroll Now
-                  <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-smooth" />
+                  {t("courses.enroll")}
+                  <ArrowRight className="h-4 w-4 rtl-flip group-hover/btn:translate-x-1 transition-smooth" />
                 </a>
               </Button>
             </article>
           ))}
 
-          {/* CTA card */}
           <article className="relative rounded-2xl p-8 gradient-emerald text-background overflow-hidden flex flex-col justify-between min-h-[260px]">
             <div className="absolute inset-0 pattern-overlay opacity-20" />
             <div className="relative">
               <p className="font-arabic text-2xl text-gold-light mb-2">طَلَبُ الْعِلْمِ فَرِيضَةٌ</p>
-              <h3 className="font-display text-2xl mb-2">Not sure where to start?</h3>
-              <p className="text-background/80 text-sm">Book a free assessment with one of our scholars.</p>
+              <h3 className="font-display text-2xl mb-2">{t("courses.cta.title")}</h3>
+              <p className="text-background/80 text-sm">{t("courses.cta.desc")}</p>
             </div>
             <Button variant="gold" className="relative w-fit mt-6" asChild>
-              <a href="#contact">Talk to a Scholar <ArrowRight className="h-4 w-4" /></a>
+              <a href="#contact">{t("courses.cta.btn")} <ArrowRight className="h-4 w-4 rtl-flip" /></a>
             </Button>
           </article>
         </div>

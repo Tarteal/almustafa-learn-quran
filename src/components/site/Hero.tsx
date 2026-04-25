@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle, Sparkles } from "lucide-react";
 import heroImg from "@/assets/hero-mosque.jpg";
+import { useI18n } from "@/i18n/I18nContext";
 
 const Hero = () => {
+  const { t } = useI18n();
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background image */}
       <div className="absolute inset-0">
         <img
           src={heroImg}
@@ -18,7 +19,6 @@ const Hero = () => {
         <div className="absolute inset-0 pattern-overlay opacity-[0.08]" />
       </div>
 
-      {/* Glow accents */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-gold/10 blur-3xl animate-glow-pulse" />
       <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-emerald/30 blur-3xl animate-glow-pulse" />
 
@@ -27,7 +27,7 @@ const Hero = () => {
           <div className="inline-flex items-center gap-2 rounded-full bg-gold/15 border border-gold/30 backdrop-blur-md px-4 py-1.5 mb-8 animate-fade-in-down">
             <Sparkles className="h-3.5 w-3.5 text-gold-light" />
             <span className="text-xs font-medium tracking-wider uppercase text-gold-light">
-              Trusted by 5,000+ students worldwide
+              {t("hero.badge")}
             </span>
           </div>
 
@@ -39,16 +39,15 @@ const Hero = () => {
             className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold leading-[1.05] text-background mb-6 animate-fade-in"
             style={{ animationDelay: "200ms", opacity: 0 }}
           >
-            Learn Quran Online with{" "}
-            <span className="text-gradient-gold italic">Expert Teachers</span>
+            {t("hero.title.a")}{" "}
+            <span className="text-gradient-gold italic">{t("hero.title.b")}</span>
           </h1>
 
           <p
             className="text-lg md:text-xl text-background/80 max-w-2xl mb-10 leading-relaxed animate-fade-in"
             style={{ animationDelay: "400ms", opacity: 0 }}
           >
-            Flexible 1-on-1 classes for kids and adults worldwide. Certified Egyptian
-            and Pakistani scholars guiding your journey with Tajweed, Hifz, and Tafseer.
+            {t("hero.subtitle")}
           </p>
 
           <div
@@ -57,7 +56,7 @@ const Hero = () => {
           >
             <Button variant="gold" size="xl" asChild>
               <a href="#pricing">
-                Start Free Trial <ArrowRight className="h-5 w-5" />
+                {t("hero.cta.trial")} <ArrowRight className="h-5 w-5 rtl-flip" />
               </a>
             </Button>
             <Button
@@ -67,20 +66,19 @@ const Hero = () => {
               asChild
             >
               <a href="#courses">
-                <PlayCircle className="h-5 w-5" /> View Courses
+                <PlayCircle className="h-5 w-5" /> {t("hero.cta.courses")}
               </a>
             </Button>
           </div>
 
-          {/* Stats */}
           <div
             className="mt-16 grid grid-cols-3 gap-6 max-w-xl animate-fade-in"
             style={{ animationDelay: "800ms", opacity: 0 }}
           >
             {[
-              { num: "5,000+", label: "Students" },
-              { num: "120+", label: "Teachers" },
-              { num: "45+", label: "Countries" },
+              { num: "5,000+", label: t("hero.stat.students") },
+              { num: "120+", label: t("hero.stat.teachers") },
+              { num: "45+", label: t("hero.stat.countries") },
             ].map((s) => (
               <div key={s.label}>
                 <div className="font-display text-3xl md:text-4xl text-gradient-gold font-semibold">
@@ -93,7 +91,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Bottom fade to next section */}
       <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-background pointer-events-none" />
     </section>
   );
