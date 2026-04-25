@@ -7,43 +7,43 @@
 @layer base {
   :root {
     /* Almustafa Quran Academy — Deep Emerald + Ivory + Gold */
-    --background: 42 40% 97%;          /* warm ivory */
-    --foreground: 158 55% 8%;          /* near-black emerald ink */
+    --background: 42 38% 96%;
+    --foreground: 158 45% 12%;
 
-    --card: 0 0% 100%;                 /* pure white cards for max contrast */
-    --card-foreground: 158 55% 8%;
+    --card: 42 50% 98%;
+    --card-foreground: 158 45% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 158 55% 8%;
+    --popover: 42 50% 98%;
+    --popover-foreground: 158 45% 12%;
 
-    --primary: 158 65% 16%;            /* deep emerald */
-    --primary-foreground: 42 50% 98%;
-    --primary-glow: 158 55% 26%;
+    --primary: 158 60% 18%;
+    --primary-foreground: 42 50% 97%;
+    --primary-glow: 158 50% 28%;
 
-    --secondary: 158 30% 90%;
-    --secondary-foreground: 158 65% 14%;
+    --secondary: 158 30% 92%;
+    --secondary-foreground: 158 60% 18%;
 
-    --muted: 42 25% 90%;
-    --muted-foreground: 158 30% 22%;   /* readable secondary text */
+    --muted: 42 25% 92%;
+    --muted-foreground: 158 20% 35%;
 
-    --accent: 42 65% 50%;              /* gold */
-    --accent-foreground: 158 60% 10%;
+    --accent: 42 65% 52%;
+    --accent-foreground: 158 60% 12%;
     --accent-soft: 42 70% 88%;
 
-    --gold: 42 65% 50%;
-    --gold-deep: 38 80% 32%;           /* darker gold for legibility */
+    --gold: 42 65% 52%;
+    --gold-deep: 38 70% 42%;
     --gold-light: 45 80% 70%;
 
-    --emerald-deep: 158 65% 8%;
-    --emerald: 158 65% 16%;
-    --emerald-soft: 158 35% 26%;
+    --emerald-deep: 158 65% 10%;
+    --emerald: 158 60% 18%;
+    --emerald-soft: 158 35% 35%;
 
-    --destructive: 0 75% 42%;
-    --destructive-foreground: 42 50% 98%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 42 50% 97%;
 
-    --border: 158 22% 68%;             /* clearly visible borders */
-    --input: 158 28% 55%;              /* strong input borders */
-    --ring: 158 65% 18%;
+    --border: 42 25% 86%;
+    --input: 42 25% 86%;
+    --ring: 158 60% 18%;
 
     --radius: 0.75rem;
 
@@ -140,3 +140,48 @@
     transform: scaleX(-1);
   }
 }
+
+/* Dark, high-contrast scope for app surfaces (dashboard, auth) */
+.surface-dark {
+  --background: 158 50% 7%;
+  --foreground: 42 60% 96%;
+
+  --card: 158 45% 11%;
+  --card-foreground: 42 60% 96%;
+
+  --popover: 158 45% 11%;
+  --popover-foreground: 42 60% 96%;
+
+  --primary: 42 80% 60%;
+  --primary-foreground: 158 60% 10%;
+  --primary-glow: 45 85% 70%;
+
+  --secondary: 158 40% 16%;
+  --secondary-foreground: 42 60% 96%;
+
+  --muted: 158 35% 18%;
+  --muted-foreground: 42 30% 80%;
+
+  --accent: 42 80% 60%;
+  --accent-foreground: 158 60% 10%;
+  --accent-soft: 158 40% 18%;
+
+  --gold: 42 85% 62%;
+  --gold-deep: 42 90% 70%;
+  --gold-light: 45 90% 78%;
+
+  --emerald-deep: 158 60% 8%;
+  --emerald: 158 55% 18%;
+  --emerald-soft: 158 35% 30%;
+
+  --destructive: 0 80% 55%;
+  --destructive-foreground: 42 60% 96%;
+
+  --border: 158 30% 28%;
+  --input: 158 30% 32%;
+  --ring: 42 80% 60%;
+
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
