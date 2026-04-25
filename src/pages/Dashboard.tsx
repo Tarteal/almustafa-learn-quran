@@ -10,6 +10,7 @@ import SEO from "@/components/SEO";
 import { useI18n } from "@/i18n/I18nContext";
 import LangSwitcher from "@/components/site/LangSwitcher";
 import RequestSlotDialog from "@/components/dashboard/RequestSlotDialog";
+import SurfaceThemeToggle, { useSurfaceTheme } from "@/components/SurfaceThemeToggle";
 
 type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
 type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
@@ -31,6 +32,7 @@ const Dashboard = () => {
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const { theme, toggle } = useSurfaceTheme();
 
   const locale = localeFor(lang);
 
@@ -131,7 +133,7 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="surface-dark min-h-screen pt-28 pb-20 px-4">
+    <main className={`${theme === "dark" ? "surface-dark" : "surface-light"} min-h-screen pt-28 pb-20 px-4`}>
       <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
@@ -140,6 +142,7 @@ const Dashboard = () => {
             <h1 className="font-display text-3xl text-foreground">{t("dash.greeting")} {profile?.full_name || user?.email}</h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <SurfaceThemeToggle theme={theme} onToggle={toggle} />
             <LangSwitcher />
             <Button variant="emerald" asChild><Link to="/enroll"><Plus className="h-4 w-4" /> {t("dash.enroll")}</Link></Button>
             <Button variant="ghost" onClick={onSignOut}><LogOut className="h-4 w-4" /> {t("dash.signout")}</Button>
