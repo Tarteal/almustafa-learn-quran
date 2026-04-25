@@ -81,15 +81,15 @@ const Auth = () => {
   };
 
   return (
-    <main className="min-h-screen grid place-items-center px-4 py-24 bg-secondary/30 pattern-overlay">
+    <main className="min-h-screen grid place-items-center px-4 py-24 bg-background pattern-overlay">
       <SEO title={mode === "signup" ? "Create Account · Almustafa Quran Academy" : "Sign In · Almustafa Quran Academy"} description="Sign in or create your student account to enroll in Quran courses." />
-      <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-elegant p-8">
+      <div className="w-full max-w-md bg-card border-2 border-border rounded-2xl shadow-elegant p-8 ring-1 ring-foreground/5">
         <div className="text-center mb-6">
           <div className="mx-auto h-12 w-12 rounded-full gradient-emerald grid place-items-center shadow-elegant mb-3">
             <span className="font-arabic text-gold text-xl">ﷲ</span>
           </div>
-          <h1 className="font-display text-2xl">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="font-display text-2xl text-foreground">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
+          <p className="text-sm text-foreground/70 mt-1">
             {mode === "signup" ? "Begin your Quran journey today." : "Continue your learning."}
           </p>
         </div>
@@ -106,42 +106,42 @@ const Auth = () => {
 
         <div className="relative mb-4">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or</span></div>
+          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-foreground/60 font-medium">or</span></div>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
           {mode === "signup" && (
             <>
               <div>
-                <Label htmlFor="full_name">Full name</Label>
-                <Input id="full_name" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required />
+                <Label htmlFor="full_name" className="text-foreground font-medium">Full name</Label>
+                <Input id="full_name" className="border-input/80 focus-visible:ring-2 focus-visible:ring-primary mt-1.5" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required />
               </div>
               <div>
-                <Label htmlFor="phone">Phone (optional)</Label>
-                <Input id="phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                <Label htmlFor="phone" className="text-foreground font-medium">Phone (optional)</Label>
+                <Input id="phone" className="border-input/80 focus-visible:ring-2 focus-visible:ring-primary mt-1.5" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               </div>
             </>
           )}
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+            <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
+            <Input id="email" type="email" className="border-input/80 focus-visible:ring-2 focus-visible:ring-primary mt-1.5" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+            <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
+            <Input id="password" type="password" className="border-input/80 focus-visible:ring-2 focus-visible:ring-primary mt-1.5" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
           </div>
           <Button type="submit" variant="emerald" size="lg" className="w-full" disabled={submitting}>
             {submitting ? "Please wait..." : mode === "signup" ? "Create Account" : "Sign In"}
           </Button>
         </form>
 
-        <p className="text-sm text-center text-muted-foreground mt-6">
+        <p className="text-sm text-center text-foreground/70 mt-6">
           {mode === "signup" ? "Already have an account?" : "New here?"}{" "}
-          <button className="text-primary font-medium hover:underline" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
+          <button className="text-primary font-semibold hover:underline" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
             {mode === "signup" ? "Sign in" : "Create account"}
           </button>
         </p>
-        <p className="text-xs text-center text-muted-foreground mt-4">
+        <p className="text-xs text-center text-foreground/60 mt-4">
           <Link to="/" className="hover:text-primary">← Back to home</Link>
         </p>
       </div>
