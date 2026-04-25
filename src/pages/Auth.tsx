@@ -67,6 +67,19 @@ const Auth = () => {
     }
   };
 
+  const onGoogle = async () => {
+    setSubmitting(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}${redirect}`,
+      });
+      if (result.error) { toast.error((result.error as any).message || "Google sign-in failed"); return; }
+      if (result.redirected) return;
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <main className="min-h-screen grid place-items-center px-4 py-24 bg-secondary/30 pattern-overlay">
       <SEO title={mode === "signup" ? "Create Account · Almustafa Quran Academy" : "Sign In · Almustafa Quran Academy"} description="Sign in or create your student account to enroll in Quran courses." />
