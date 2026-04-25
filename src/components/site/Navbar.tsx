@@ -79,6 +79,9 @@ const Navbar = () => {
               <Button variant="gold" size="sm" asChild>
                 <Link to="/enroll">Enroll</Link>
               </Button>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4" /> Sign out
+              </Button>
             </>
           ) : (
             <>
