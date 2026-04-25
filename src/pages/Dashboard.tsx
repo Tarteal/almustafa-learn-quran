@@ -131,13 +131,13 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-overlay">
+    <main className="min-h-screen pt-28 pb-20 px-4 bg-background">
       <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1">{t("dash.eyebrow")}</p>
-            <h1 className="font-display text-3xl">{t("dash.greeting")} {profile?.full_name || user?.email}</h1>
+            <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1 font-semibold">{t("dash.eyebrow")}</p>
+            <h1 className="font-display text-3xl text-foreground">{t("dash.greeting")} {profile?.full_name || user?.email}</h1>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <LangSwitcher />
