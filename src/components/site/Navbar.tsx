@@ -1,19 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-
-const links = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Courses", href: "#courses" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
-];
+import { useI18n } from "@/i18n/I18nContext";
+import LangSwitcher from "./LangSwitcher";
 
 const Navbar = () => {
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const links = [
+    { label: t("nav.home"), href: "#home" },
+    { label: t("nav.about"), href: "#about" },
+    { label: t("nav.courses"), href: "#courses" },
+    { label: t("nav.pricing"), href: "#pricing" },
+    { label: t("nav.blog"), href: "#blog" },
+    { label: t("nav.contact"), href: "#contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -55,21 +58,25 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          <LangSwitcher />
           <Button variant="ghost" size="sm" asChild>
-            <a href="#contact">Sign In</a>
+            <a href="#contact">{t("nav.signin")}</a>
           </Button>
           <Button variant="gold" size="sm" asChild>
-            <a href="#pricing">Free Trial</a>
+            <a href="#pricing">{t("nav.trial")}</a>
           </Button>
         </div>
 
-        <button
-          className="lg:hidden p-2 rounded-md text-foreground"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="lg:hidden flex items-center gap-2">
+          <LangSwitcher />
+          <button
+            className="p-2 rounded-md text-foreground"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -86,7 +93,7 @@ const Navbar = () => {
               </a>
             ))}
             <Button variant="gold" className="mt-2" asChild>
-              <a href="#pricing" onClick={() => setOpen(false)}>Start Free Trial</a>
+              <a href="#pricing" onClick={() => setOpen(false)}>{t("hero.cta.trial")}</a>
             </Button>
           </div>
         </div>

@@ -1,4 +1,22 @@
+import { useI18n } from "@/i18n/I18nContext";
+
 const Footer = () => {
+  const { t } = useI18n();
+  const programs = [
+    [t("courses.noorani.t"), "#courses"],
+    [t("courses.reading.t"), "#courses"],
+    [t("courses.tajweed.t"), "#courses"],
+    [t("courses.hifz.t"), "#courses"],
+    [t("courses.tafseer.t"), "#courses"],
+  ];
+  const academy = [
+    [t("nav.about"), "#about"],
+    [t("nav.pricing"), "#pricing"],
+    [t("nav.blog"), "#blog"],
+    [t("nav.contact"), "#contact"],
+    [t("hero.cta.trial"), "#pricing"],
+  ];
+
   return (
     <footer className="relative bg-emerald-deep text-background pt-20 pb-8 overflow-hidden">
       <div className="absolute inset-0 pattern-overlay opacity-10" />
@@ -15,8 +33,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-background/60 text-sm leading-relaxed max-w-md mb-5">
-              Bringing the Quran into homes worldwide — one ayah at a time. Authentic
-              learning, certified scholars, modern convenience.
+              {t("footer.tagline")}
             </p>
             <p className="font-arabic text-2xl text-gold-light/80">
               وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ
@@ -24,24 +41,18 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-display text-base mb-4 text-gold-light">Programs</h4>
+            <h4 className="font-display text-base mb-4 text-gold-light">{t("footer.programs")}</h4>
             <ul className="space-y-2.5 text-sm text-background/70">
-              {["Noorani Qaida", "Quran Reading", "Tajweed", "Hifz Program", "Tafseer"].map((l) => (
-                <li key={l}><a href="#courses" className="hover:text-gold-light transition-smooth">{l}</a></li>
+              {programs.map(([l, h]) => (
+                <li key={l}><a href={h} className="hover:text-gold-light transition-smooth">{l}</a></li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-display text-base mb-4 text-gold-light">Academy</h4>
+            <h4 className="font-display text-base mb-4 text-gold-light">{t("footer.academy")}</h4>
             <ul className="space-y-2.5 text-sm text-background/70">
-              {[
-                ["About Us", "#about"],
-                ["Pricing", "#pricing"],
-                ["Blog", "#blog"],
-                ["Contact", "#contact"],
-                ["Free Trial", "#pricing"],
-              ].map(([l, h]) => (
+              {academy.map(([l, h]) => (
                 <li key={l}><a href={h} className="hover:text-gold-light transition-smooth">{l}</a></li>
               ))}
             </ul>
@@ -49,11 +60,11 @@ const Footer = () => {
         </div>
 
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-background/50">
-          <div>© {new Date().getFullYear()} Almustafa Quran Academy. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} Almustafa Quran Academy. {t("footer.rights")}</div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-gold-light transition-smooth">Privacy</a>
-            <a href="#" className="hover:text-gold-light transition-smooth">Terms</a>
-            <a href="#" className="hover:text-gold-light transition-smooth">Refund Policy</a>
+            <a href="#" className="hover:text-gold-light transition-smooth">{t("footer.privacy")}</a>
+            <a href="#" className="hover:text-gold-light transition-smooth">{t("footer.terms")}</a>
+            <a href="#" className="hover:text-gold-light transition-smooth">{t("footer.refund")}</a>
           </div>
         </div>
       </div>

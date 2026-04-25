@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Moon, BookOpen } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
 
 const hadiths = [
   { text: "The best of you are those who learn the Quran and teach it.", source: "Sahih al-Bukhari" },
@@ -9,22 +10,28 @@ const hadiths = [
 ];
 
 const HadithStrip = () => {
+  const { t, lang } = useI18n();
   const [index, setIndex] = useState(0);
   const [hijri, setHijri] = useState<string>("");
 
   useEffect(() => {
     setIndex(Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % hadiths.length);
     try {
-      const fmt = new Intl.DateTimeFormat("en-TN-u-ca-islamic", {
+      const localeMap: Record<string, string> = {
+        en: "en-TN-u-ca-islamic",
+        ur: "ur-PK-u-ca-islamic",
+        ar: "ar-SA-u-ca-islamic",
+      };
+      const fmt = new Intl.DateTimeFormat(localeMap[lang] || "en-TN-u-ca-islamic", {
         day: "numeric",
         month: "long",
         year: "numeric",
       });
-      setHijri(fmt.format(new Date()).replace(" AH", "") + " AH");
+      setHijri(fmt.format(new Date()));
     } catch {
       setHijri("");
     }
-  }, []);
+  }, [lang]);
 
   const h = hadiths[index];
 
@@ -37,7 +44,7 @@ const HadithStrip = () => {
             <BookOpen className="h-5 w-5 text-gold-light" />
           </div>
           <div>
-            <div className="text-xs uppercase tracking-[0.3em] text-gold-light mb-1.5">Hadith of the Day</div>
+            <div className="text-xs uppercase tracking-[0.3em] text-gold-light mb-1.5">{t("hadith.eyebrow")}</div>
             <p className="text-background/95 italic font-display text-lg md:text-xl leading-snug">
               "{h.text}"
             </p>
@@ -51,7 +58,7 @@ const HadithStrip = () => {
               <Moon className="h-5 w-5 text-gold-light" />
             </div>
             <div>
-              <div className="text-xs uppercase tracking-[0.3em] text-gold-light mb-1">Today (Hijri)</div>
+              <div className="text-xs uppercase tracking-[0.3em] text-gold-light mb-1">{t("hadith.hijri")}</div>
               <div className="font-display text-lg text-background">{hijri}</div>
             </div>
           </div>

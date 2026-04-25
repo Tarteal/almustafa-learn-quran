@@ -1,5 +1,6 @@
 import SectionHeading from "./SectionHeading";
 import { Star, Quote } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
 
 const reviews = [
   {
@@ -26,13 +27,20 @@ const reviews = [
 ];
 
 const Testimonials = () => {
+  const { t } = useI18n();
   return (
     <section className="relative py-24 md:py-32 bg-secondary/40">
       <div className="container relative">
         <SectionHeading
-          eyebrow="Testimonials"
-          title={<>Loved by <em className="text-gradient-gold not-italic font-display">families</em> worldwide</>}
-          description="Real stories from students and parents whose lives have been transformed by Quranic learning."
+          eyebrow={t("test.eyebrow")}
+          title={
+            <>
+              {t("test.title.a")}{" "}
+              <em className="text-gradient-gold not-italic font-display">{t("test.title.b")}</em>{" "}
+              {t("test.title.c")}
+            </>
+          }
+          description={t("test.desc")}
         />
 
         <div className="grid md:grid-cols-3 gap-6">
