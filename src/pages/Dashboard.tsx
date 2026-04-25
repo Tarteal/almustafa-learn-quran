@@ -4,13 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame } from "lucide-react";
+import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame, Mail, MessageCircle, Video, Calendar, GraduationCap, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 
 type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
 type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
 type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number };
+type Teacher = { id: string; full_name: string; bio: string | null; country: string | null; specialization: string | null; email: string | null; whatsapp: string | null; avatar_url: string | null };
+type Assignment = { enrollment_id: string; teacher_id: string; teachers: Teacher | null };
+type ClassRow = { id: string; enrollment_id: string; teacher_id: string; starts_at: string; duration_min: number; meeting_url: string | null; status: string };
 
 const Dashboard = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -18,6 +21,8 @@ const Dashboard = () => {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [classes, setClasses] = useState<ClassRow[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
 
