@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import { useI18n } from "@/i18n/I18nContext";
 import LangSwitcher from "@/components/site/LangSwitcher";
+import RequestSlotDialog from "@/components/dashboard/RequestSlotDialog";
 
 type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
 type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
@@ -229,7 +230,7 @@ const Dashboard = () => {
                                 const d = new Date(c.starts_at);
                                 return (
                                   <li key={c.id} className="flex items-center justify-between gap-3 text-sm">
-                                    <div>
+                                    <div className="min-w-0">
                                       <p className="font-medium text-foreground">
                                         {d.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}
                                       </p>
@@ -237,13 +238,22 @@ const Dashboard = () => {
                                         {d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} {t("dash.minutes")}
                                       </p>
                                     </div>
-                                    {c.meeting_url && (
-                                      <Button size="sm" variant="gold" asChild>
-                                        <a href={c.meeting_url} target="_blank" rel="noreferrer">
-                                          <Video className="h-4 w-4" /> {t("dash.join")}
-                                        </a>
-                                      </Button>
-                                    )}
+                                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                                      <RequestSlotDialog
+                                        enrollmentId={en.id}
+                                        teacherId={c.teacher_id}
+                                        originalClassId={c.id}
+                                        defaultStartsAt={c.starts_at}
+                                        defaultDurationMin={c.duration_min}
+                                      />
+                                      {c.meeting_url && (
+                                        <Button size="sm" variant="gold" asChild>
+                                          <a href={c.meeting_url} target="_blank" rel="noreferrer">
+                                            <Video className="h-4 w-4" /> {t("dash.join")}
+                                          </a>
+                                        </Button>
+                                      )}
+                                    </div>
                                   </li>
                                 );
                               })}

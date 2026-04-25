@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      class_requests: {
+        Row: {
+          created_at: string
+          duration_min: number
+          enrollment_id: string
+          id: string
+          note: string | null
+          original_class_id: string | null
+          requested_at: string
+          status: string
+          teacher_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_min?: number
+          enrollment_id: string
+          id?: string
+          note?: string | null
+          original_class_id?: string | null
+          requested_at: string
+          status?: string
+          teacher_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_min?: number
+          enrollment_id?: string
+          id?: string
+          note?: string | null
+          original_class_id?: string | null
+          requested_at?: string
+          status?: string
+          teacher_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           created_at: string
