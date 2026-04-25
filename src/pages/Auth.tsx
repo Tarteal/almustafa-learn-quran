@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,6 +67,19 @@ const Auth = () => {
     }
   };
 
+  const onGoogle = async () => {
+    setSubmitting(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}${redirect}`,
+      });
+      if (result.error) { toast.error((result.error as any).message || "Google sign-in failed"); return; }
+      if (result.redirected) return;
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <main className="min-h-screen grid place-items-center px-4 py-24 bg-secondary/30 pattern-overlay">
       <SEO title={mode === "signup" ? "Create Account · Almustafa Quran Academy" : "Sign In · Almustafa Quran Academy"} description="Sign in or create your student account to enroll in Quran courses." />
@@ -78,6 +92,21 @@ const Auth = () => {
           <p className="text-sm text-muted-foreground mt-1">
             {mode === "signup" ? "Begin your Quran journey today." : "Continue your learning."}
           </p>
+        </div>
+
+        <Button type="button" variant="outline" size="lg" className="w-full mb-4" disabled={submitting} onClick={onGoogle}>
+          <svg className="h-4 w-4" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+            <path fill="#FF3D00" d="M6.3 14.1l6.6 4.8C14.6 15.1 18.9 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.1z"/>
+            <path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.4l-6.5-5.3C29.4 34.7 26.8 36 24 36c-5.3 0-9.7-3.1-11.3-7.6l-6.5 5C9.6 39.6 16.2 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.5 5.3C41.6 35.6 44 30.2 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+          </svg>
+          Continue with Google
+        </Button>
+
+        <div className="relative mb-4">
+          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
+          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or</span></div>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
