@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList } from "lucide-react";
+import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
@@ -64,17 +64,19 @@ const Admin = () => {
         </header>
 
         <Tabs defaultValue="students" className="w-full">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full mb-8 h-auto">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full mb-8 h-auto">
             <TabsTrigger value="students" className="gap-2 py-2.5"><Users className="h-4 w-4" /> Students</TabsTrigger>
             <TabsTrigger value="teachers" className="gap-2 py-2.5"><GraduationCap className="h-4 w-4" /> Teachers</TabsTrigger>
             <TabsTrigger value="courses" className="gap-2 py-2.5"><BookOpen className="h-4 w-4" /> Courses</TabsTrigger>
             <TabsTrigger value="lessons" className="gap-2 py-2.5"><ListChecks className="h-4 w-4" /> Lessons</TabsTrigger>
+            <TabsTrigger value="classes" className="gap-2 py-2.5"><Video className="h-4 w-4" /> Classes</TabsTrigger>
           </TabsList>
 
           <TabsContent value="students"><StudentsPanel /></TabsContent>
           <TabsContent value="teachers"><TeachersPanel /></TabsContent>
           <TabsContent value="courses"><CoursesPanel /></TabsContent>
           <TabsContent value="lessons"><LessonsPanel /></TabsContent>
+          <TabsContent value="classes"><ClassesPanel /></TabsContent>
         </Tabs>
       </div>
     </main>
@@ -521,6 +523,191 @@ const LessonsPanel = () => {
                 <Field label="Duration (min)"><Input type="number" value={editing.duration_min ?? 30} onChange={(e) => setEditing({ ...editing, duration_min: Number(e.target.value) })} /></Field>
               </div>
               <Field label="Summary"><Textarea rows={3} value={editing.summary || ""} onChange={(e) => setEditing({ ...editing, summary: e.target.value })} /></Field>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="emerald" onClick={save}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Panel>
+  );
+};
+
+/* ---------------- Classes ---------------- */
+type ClassFull = {
+  id: string;
+  enrollment_id: string;
+  teacher_id: string;
+  starts_at: string;
+  duration_min: number;
+  meeting_url: string | null;
+  status: string;
+};
+
+const toLocalInput = (iso: string) => {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+const emptyClass: Partial<ClassFull> = {
+  enrollment_id: "", teacher_id: "", starts_at: new Date().toISOString(), duration_min: 30, meeting_url: "", status: "scheduled",
+};
+
+const ClassesPanel = () => {
+  const [items, setItems] = useState<ClassFull[]>([]);
+  const [enrollments, setEnrollments] = useState<(Enrollment & { course?: Course; profile?: Profile })[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<Partial<ClassFull> | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const [clsRes, eRes, cRes, tRes, pRes] = await Promise.all([
+      supabase.from("classes").select("*").order("starts_at", { ascending: false }),
+      supabase.from("enrollments").select("id, user_id, course_id, plan, status, created_at"),
+      supabase.from("courses").select("id, title, slug, level, duration, price_monthly, description, plan"),
+      supabase.from("teachers").select("*").order("full_name"),
+      supabase.from("profiles").select("id, full_name, phone, created_at"),
+    ]);
+    if (clsRes.error) toast.error(clsRes.error.message);
+    setItems((clsRes.data as ClassFull[]) || []);
+    const courses = (cRes.data as Course[]) || [];
+    const profiles = (pRes.data as Profile[]) || [];
+    setEnrollments(((eRes.data as Enrollment[]) || []).map((e) => ({
+      ...e,
+      course: courses.find((c) => c.id === e.course_id),
+      profile: profiles.find((p) => p.id === e.user_id),
+    })));
+    setTeachers((tRes.data as Teacher[]) || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async () => {
+    if (!editing) return;
+    if (!editing.enrollment_id || !editing.teacher_id || !editing.starts_at) {
+      return toast.error("Enrollment, teacher and start time required");
+    }
+    const payload: any = {
+      enrollment_id: editing.enrollment_id,
+      teacher_id: editing.teacher_id,
+      starts_at: new Date(editing.starts_at).toISOString(),
+      duration_min: Number(editing.duration_min || 30),
+      meeting_url: editing.meeting_url || null,
+      status: editing.status || "scheduled",
+    };
+    const res = editing.id
+      ? await supabase.from("classes").update(payload).eq("id", editing.id)
+      : await supabase.from("classes").insert(payload);
+    if (res.error) return toast.error(res.error.message);
+    toast.success(editing.id ? "Class updated" : "Class created");
+    setDialogOpen(false); setEditing(null); load();
+  };
+
+  const remove = async (id: string) => {
+    const { error } = await supabase.from("classes").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Class deleted"); load();
+  };
+
+  const teacherName = (id: string) => teachers.find((t) => t.id === id)?.full_name || id.slice(0, 8);
+  const enrLabel = (id: string) => {
+    const e = enrollments.find((x) => x.id === id);
+    if (!e) return id.slice(0, 8);
+    return `${e.profile?.full_name || "Student"} — ${e.course?.title || "Course"}`;
+  };
+
+  if (loading) return <Loader />;
+
+  return (
+    <Panel
+      title={`Classes (${items.length})`}
+      action={
+        <Button variant="emerald" onClick={() => { setEditing({ ...emptyClass }); setDialogOpen(true); }}>
+          <Plus className="h-4 w-4" /> New class
+        </Button>
+      }
+    >
+      <div className="space-y-2">
+        {items.map((c) => {
+          const d = new Date(c.starts_at);
+          return (
+            <div key={c.id} className="border border-border rounded-xl p-3 flex flex-wrap items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{enrLabel(c.enrollment_id)}</p>
+                <p className="text-xs text-foreground/60 truncate">
+                  {teacherName(c.teacher_id)} · {d.toLocaleString()} · {c.duration_min} min · <span className="capitalize">{c.status}</span>
+                  {c.meeting_url ? <span className="text-emerald"> · Zoom ✓</span> : <span className="text-foreground/40"> · No link</span>}
+                </p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <Button size="icon" variant="ghost" onClick={() => { setEditing({ ...c, starts_at: toLocalInput(c.starts_at) as any }); setDialogOpen(true); }}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <ConfirmDelete onConfirm={() => remove(c.id)} label="Delete this class?" />
+              </div>
+            </div>
+          );
+        })}
+        {items.length === 0 && <p className="text-sm text-foreground/60 text-center py-6">No classes scheduled.</p>}
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editing?.id ? "Edit class" : "New class"}</DialogTitle></DialogHeader>
+          {editing && (
+            <div className="space-y-3">
+              <Field label="Enrollment (Student — Course) *">
+                <Select value={editing.enrollment_id || ""} onValueChange={(v) => setEditing({ ...editing, enrollment_id: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select enrollment" /></SelectTrigger>
+                  <SelectContent>
+                    {enrollments.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.profile?.full_name || "Student"} — {e.course?.title || "Course"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Teacher *">
+                <Select value={editing.teacher_id || ""} onValueChange={(v) => setEditing({ ...editing, teacher_id: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select teacher" /></SelectTrigger>
+                  <SelectContent>
+                    {teachers.map((t) => <SelectItem key={t.id} value={t.id}>{t.full_name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Date & Time *">
+                  <Input
+                    type="datetime-local"
+                    value={typeof editing.starts_at === "string" && editing.starts_at.includes("T") && !editing.starts_at.endsWith("Z")
+                      ? editing.starts_at
+                      : toLocalInput(editing.starts_at || new Date().toISOString())}
+                    onChange={(e) => setEditing({ ...editing, starts_at: e.target.value })}
+                  />
+                </Field>
+                <Field label="Duration (min)">
+                  <Input type="number" value={editing.duration_min ?? 30} onChange={(e) => setEditing({ ...editing, duration_min: Number(e.target.value) })} />
+                </Field>
+              </div>
+              <Field label="Zoom Meeting URL">
+                <Input placeholder="https://zoom.us/j/..." value={editing.meeting_url || ""} onChange={(e) => setEditing({ ...editing, meeting_url: e.target.value })} />
+              </Field>
+              <Field label="Status">
+                <Select value={editing.status || "scheduled"} onValueChange={(v) => setEditing({ ...editing, status: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
             </div>
           )}
           <DialogFooter>
