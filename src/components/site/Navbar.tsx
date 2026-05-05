@@ -51,7 +51,7 @@ const Navbar = () => {
             <div className="absolute inset-0 rounded-full ring-1 ring-gold/40" />
           </div>
           <div className="leading-tight">
-            <div className="font-display text-lg font-semibold text-foreground">Almustafa</div>
+            <div className="font-display text-lg font-semibold text-white">Almustafa</div>
             <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Quran Academy</div>
           </div>
         </a>
@@ -61,7 +61,7 @@ const Navbar = () => {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-smooth relative group"
+              className="text-sm font-medium text-white/80 hover:text-gold transition-smooth relative group"
             >
               {l.label}
               <span className="absolute -bottom-1 left-0 right-0 h-px bg-gold scale-x-0 group-hover:scale-x-100 transition-smooth origin-left" />
@@ -98,7 +98,7 @@ const Navbar = () => {
         <div className="lg:hidden flex items-center gap-2">
           <LangSwitcher />
           <button
-            className="p-2 rounded-md text-foreground"
+            className="p-2 rounded-md text-white"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -115,7 +115,7 @@ const Navbar = () => {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="text-base font-medium py-2 text-foreground/90"
+                className="text-base font-medium py-2 text-white/90"
               >
                 {l.label}
               </a>

@@ -17,7 +17,7 @@ const LangSwitcher = ({ light = false }: { light?: boolean }) => {
         className={`inline-flex items-center gap-2 rounded-md px-3 h-9 text-sm font-medium transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           light
             ? "text-background/90 hover:bg-white/10 border border-white/20"
-            : "text-foreground/80 hover:bg-accent/40 border border-border"
+            : "text-white/80 hover:bg-white/10 border border-white/20"
         }`}
         aria-label="Change language"
       >
