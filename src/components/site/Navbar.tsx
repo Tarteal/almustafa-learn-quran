@@ -51,7 +51,7 @@ const Navbar = () => {
             <div className="absolute inset-0 rounded-full ring-1 ring-gold/40" />
           </div>
           <div className="leading-tight">
-            <div className="font-display text-lg font-semibold text-foreground">Almustafa</div>
+            <div className="font-display text-lg font-semibold text-white">Almustafa</div>
             <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Quran Academy</div>
           </div>
         </a>
