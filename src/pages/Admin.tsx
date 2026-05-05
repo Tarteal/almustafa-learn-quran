@@ -64,17 +64,19 @@ const Admin = () => {
         </header>
 
         <Tabs defaultValue="students" className="w-full">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full mb-8 h-auto">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full mb-8 h-auto">
             <TabsTrigger value="students" className="gap-2 py-2.5"><Users className="h-4 w-4" /> Students</TabsTrigger>
             <TabsTrigger value="teachers" className="gap-2 py-2.5"><GraduationCap className="h-4 w-4" /> Teachers</TabsTrigger>
             <TabsTrigger value="courses" className="gap-2 py-2.5"><BookOpen className="h-4 w-4" /> Courses</TabsTrigger>
             <TabsTrigger value="lessons" className="gap-2 py-2.5"><ListChecks className="h-4 w-4" /> Lessons</TabsTrigger>
+            <TabsTrigger value="classes" className="gap-2 py-2.5"><Video className="h-4 w-4" /> Classes</TabsTrigger>
           </TabsList>
 
           <TabsContent value="students"><StudentsPanel /></TabsContent>
           <TabsContent value="teachers"><TeachersPanel /></TabsContent>
           <TabsContent value="courses"><CoursesPanel /></TabsContent>
           <TabsContent value="lessons"><LessonsPanel /></TabsContent>
+          <TabsContent value="classes"><ClassesPanel /></TabsContent>
         </Tabs>
       </div>
     </main>
