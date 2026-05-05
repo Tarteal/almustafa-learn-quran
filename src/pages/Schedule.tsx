@@ -4,8 +4,92 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Video, Calendar, Clock, ArrowLeft, BookOpen, GraduationCap, Bell } from "lucide-react";
+import { Loader2, Video, Calendar, Clock, ArrowLeft, BookOpen, GraduationCap, Bell, LinkIcon, CheckCircle2, Hourglass } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const formatStartsIn = (startsAt: string) => {
+  const ms = new Date(startsAt).getTime() - Date.now();
+  if (ms <= 0) return "soon";
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (d > 0) return `in ${d}d ${h}h`;
+  if (h > 0) return `in ${h}h ${m}m`;
+  return `in ${Math.max(1, m)}m`;
+};
+
+type JoinButtonProps = {
+  state: "live" | "upcoming" | "completed";
+  meetingUrl: string | null;
+  startsAt: string;
+  className?: string;
+  size?: "default" | "lg";
+  fullWidth?: boolean;
+};
+
+const JoinButton = ({ state, meetingUrl, startsAt, className, size = "default", fullWidth }: JoinButtonProps) => {
+  const isLive = state === "live";
+  const hasLink = !!meetingUrl;
+
+  let label = "Join Meeting";
+  let helper = "";
+  let Icon = Video;
+  let variant: "gold" | "ghost" | "secondary" = "gold";
+
+  if (state === "completed") {
+    label = "Class ended";
+    helper = "This class has finished.";
+    Icon = CheckCircle2;
+    variant = "secondary";
+  } else if (!hasLink) {
+    label = "Link not available";
+    helper = "Your teacher hasn't added a Zoom link yet. Please check back closer to the start time.";
+    Icon = LinkIcon;
+    variant = "ghost";
+  } else if (!isLive) {
+    label = `Opens ${formatStartsIn(startsAt)}`;
+    helper = "The Join button activates when class goes live.";
+    Icon = Hourglass;
+    variant = "ghost";
+  }
+
+  const disabled = !(isLive && hasLink);
+  const widthCls = fullWidth ? "w-full" : "";
+
+  const btn = (
+    <Button
+      className={`${widthCls} ${className || ""}`}
+      variant={isLive && hasLink ? "gold" : variant}
+      size={size}
+      disabled={disabled}
+      asChild={!disabled}
+      aria-label={label}
+    >
+      {!disabled ? (
+        <a href={meetingUrl!} target="_blank" rel="noreferrer">
+          <Icon className="h-4 w-4" /> Join Meeting
+        </a>
+      ) : (
+        <span><Icon className="h-4 w-4" /> {label}</span>
+      )}
+    </Button>
+  );
+
+  if (!helper) return btn;
+
+  return (
+    <TooltipProvider delayDuration={150}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className={fullWidth ? "block w-full" : "inline-block"}>{btn}</span>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs text-center">{helper}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 type ClassRow = {
   id: string;
@@ -241,22 +325,7 @@ const NextClassHero = ({ c }: { c: ClassRow }) => {
               {fmt(diff)}
             </div>
           )}
-          {c.meeting_url && state !== "completed" ? (
-            <Button
-              variant="gold"
-              size="lg"
-              disabled={state !== "live"}
-              asChild={state === "live"}
-            >
-              {state === "live" ? (
-                <a href={c.meeting_url} target="_blank" rel="noreferrer">
-                  <Video className="h-4 w-4" /> Join Meeting
-                </a>
-              ) : (
-                <span><Video className="h-4 w-4" /> Join Meeting</span>
-              )}
-            </Button>
-          ) : null}
+          <JoinButton state={state} meetingUrl={c.meeting_url} startsAt={c.starts_at} size="lg" />
         </div>
       </div>
     </section>
@@ -279,25 +348,11 @@ const ClassCard = ({ c }: { c: ClassRow }) => {
       <p className="text-sm text-foreground/70 mb-1 flex items-center gap-1.5">
         <Clock className="h-3.5 w-3.5" /> {d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · {c.duration_min} min
       </p>
-      {c.meeting_url && state !== "completed" ? (
-        <Button
-          className="w-full mt-3"
-          variant={isLive ? "gold" : "ghost"}
-          disabled={!isLive}
-          asChild={isLive}
-        >
-          {isLive ? (
-            <a href={c.meeting_url} target="_blank" rel="noreferrer">
-              <Video className="h-4 w-4" /> Join Meeting
-            </a>
-          ) : (
-            <span><Video className="h-4 w-4" /> Join Meeting</span>
-          )}
-        </Button>
-      ) : state === "completed" ? (
-        <Button className="w-full mt-3" variant="ghost" disabled>Completed</Button>
-      ) : (
-        <p className="text-xs text-foreground/50 mt-3 text-center">No meeting link yet</p>
+      <div className="mt-3">
+        <JoinButton state={state} meetingUrl={c.meeting_url} startsAt={c.starts_at} fullWidth />
+      </div>
+      {!c.meeting_url && state !== "completed" && (
+        <p className="text-[11px] text-foreground/50 mt-2 text-center">Zoom link will appear here once your teacher adds it.</p>
       )}
     </article>
   );
