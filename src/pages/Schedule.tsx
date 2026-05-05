@@ -325,22 +325,7 @@ const NextClassHero = ({ c }: { c: ClassRow }) => {
               {fmt(diff)}
             </div>
           )}
-          {c.meeting_url && state !== "completed" ? (
-            <Button
-              variant="gold"
-              size="lg"
-              disabled={state !== "live"}
-              asChild={state === "live"}
-            >
-              {state === "live" ? (
-                <a href={c.meeting_url} target="_blank" rel="noreferrer">
-                  <Video className="h-4 w-4" /> Join Meeting
-                </a>
-              ) : (
-                <span><Video className="h-4 w-4" /> Join Meeting</span>
-              )}
-            </Button>
-          ) : null}
+          <JoinButton state={state} meetingUrl={c.meeting_url} startsAt={c.starts_at} size="lg" />
         </div>
       </div>
     </section>
