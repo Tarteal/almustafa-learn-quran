@@ -131,7 +131,7 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-background pattern-overlay">
+    <main className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-background" style={{ backgroundImage: "url('/src/assets/pattern.png')", backgroundSize: "280px", backgroundRepeat: "repeat", opacity: 1 }}>
       <SEO title="My Dashboard · Almustafa Quran Academy" description="Track your enrolled Quran courses, progress, and next lessons." />
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-10">
