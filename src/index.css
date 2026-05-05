@@ -8,7 +8,7 @@
   :root {
     /* Almustafa Quran Academy — Deep Emerald + Ivory + Gold */
     --background: 42 38% 96%;          /* warm ivory */
-    --foreground: 158 45% 12%;         /* deep emerald ink */
+    --foreground: 0 0% 100%;           /* white */
 
     --card: 42 50% 98%;
     --card-foreground: 158 45% 12%;
