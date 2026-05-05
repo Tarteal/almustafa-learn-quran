@@ -115,7 +115,7 @@ const Navbar = () => {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="text-base font-medium py-2 text-foreground/90"
+                className="text-base font-medium py-2 text-white/90"
               >
                 {l.label}
               </a>
