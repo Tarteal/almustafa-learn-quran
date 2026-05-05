@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
@@ -13,6 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import SEO from "@/components/SEO";
 
 type Profile = { id: string; full_name: string | null; phone: string | null; created_at: string };
@@ -127,7 +129,11 @@ const StudentsPanel = () => {
     load();
   };
 
+  const [detailsId, setDetailsId] = useState<string | null>(null);
+
   if (loading) return <Loader />;
+
+  const detailsProfile = profiles.find((p) => p.id === detailsId) || null;
 
   return (
     <div className="space-y-6">
@@ -139,7 +145,8 @@ const StudentsPanel = () => {
                 <th className="px-6 sm:px-8 py-3">Name</th>
                 <th className="py-3">Phone</th>
                 <th className="py-3">Joined</th>
-                <th className="px-6 sm:px-8 py-3">Enrollments</th>
+                <th className="py-3">Enrollments</th>
+                <th className="px-6 sm:px-8 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -150,15 +157,26 @@ const StudentsPanel = () => {
                     <td className="px-6 sm:px-8 py-3 font-medium">{p.full_name || <span className="text-foreground/50">—</span>}</td>
                     <td className="py-3 text-foreground/70">{p.phone || "—"}</td>
                     <td className="py-3 text-foreground/70">{new Date(p.created_at).toLocaleDateString()}</td>
-                    <td className="px-6 sm:px-8 py-3">{count}</td>
+                    <td className="py-3">{count}</td>
+                    <td className="px-6 sm:px-8 py-3 text-right">
+                      <Button size="sm" variant="ghost" onClick={() => setDetailsId(p.id)}>
+                        <Eye className="h-4 w-4" /> View
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
-              {profiles.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-foreground/60">No students yet.</td></tr>}
+              {profiles.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-foreground/60">No students yet.</td></tr>}
             </tbody>
           </table>
         </div>
       </Panel>
+
+      <StudentDetailsDrawer
+        open={!!detailsId}
+        onClose={() => setDetailsId(null)}
+        profile={detailsProfile}
+      />
 
       <Panel title={`Enrollments (${enrollments.length})`}>
         <div className="overflow-x-auto -mx-6 sm:-mx-8">
@@ -543,6 +561,182 @@ const ConfirmDelete = ({ onConfirm, label }: { onConfirm: () => void; label: str
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
+);
+
+/* ---------------- Student details drawer ---------------- */
+type ClassRow = { id: string; starts_at: string; status: string; duration_min: number; enrollment_id: string };
+type LessonProgressRow = { id: string; lesson_id: string; completed_at: string; lesson?: { title: string; course_id: string } };
+
+const StudentDetailsDrawer = ({
+  open, onClose, profile,
+}: { open: boolean; onClose: () => void; profile: Profile | null }) => {
+  const [loading, setLoading] = useState(false);
+  const [enrollments, setEnrollments] = useState<(Enrollment & { course?: Course })[]>([]);
+  const [classes, setClasses] = useState<ClassRow[]>([]);
+  const [progress, setProgress] = useState<LessonProgressRow[]>([]);
+
+  useEffect(() => {
+    if (!open || !profile) return;
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const eRes = await supabase
+        .from("enrollments")
+        .select("id, user_id, course_id, plan, status, created_at")
+        .eq("user_id", profile.id)
+        .order("created_at", { ascending: false });
+      const enr = (eRes.data as Enrollment[]) || [];
+      const courseIds = Array.from(new Set(enr.map((e) => e.course_id)));
+      const enrIds = enr.map((e) => e.id);
+
+      const [cRes, clsRes, lpRes] = await Promise.all([
+        courseIds.length
+          ? supabase.from("courses").select("*").in("id", courseIds)
+          : Promise.resolve({ data: [] as Course[] } as any),
+        enrIds.length
+          ? supabase.from("classes").select("id, starts_at, status, duration_min, enrollment_id").in("enrollment_id", enrIds).order("starts_at", { ascending: false })
+          : Promise.resolve({ data: [] as ClassRow[] } as any),
+        supabase.from("lesson_progress").select("id, lesson_id, completed_at, lesson:lessons(title, course_id)").eq("user_id", profile.id).order("completed_at", { ascending: false }).limit(50),
+      ]);
+
+      if (cancelled) return;
+      const courses = (cRes.data as Course[]) || [];
+      setEnrollments(enr.map((e) => ({ ...e, course: courses.find((c) => c.id === e.course_id) })));
+      setClasses((clsRes.data as ClassRow[]) || []);
+      setProgress((lpRes.data as any) || []);
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [open, profile]);
+
+  const attended = classes.filter((c) => c.status === "completed").length;
+  const upcoming = classes.filter((c) => c.status === "scheduled" && new Date(c.starts_at) > new Date()).length;
+  const cancelled = classes.filter((c) => c.status === "cancelled").length;
+  const total = classes.length;
+  const attendanceRate = total ? Math.round((attended / total) * 100) : 0;
+
+  const statusVariant = (s: string): "default" | "secondary" | "destructive" | "outline" => {
+    if (s === "active" || s === "completed" || s === "scheduled") return "default";
+    if (s === "pending") return "secondary";
+    if (s === "cancelled") return "destructive";
+    return "outline";
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
+      <SheetContent side="right" className="w-full sm:max-w-xl overflow-y-auto bg-card">
+        <SheetHeader>
+          <SheetTitle className="font-display text-xl">{profile?.full_name || "Student"}</SheetTitle>
+          <SheetDescription>
+            {profile?.phone || "No phone"} · Joined {profile ? new Date(profile.created_at).toLocaleDateString() : ""}
+          </SheetDescription>
+        </SheetHeader>
+
+        {loading ? (
+          <div className="py-12"><Loader /></div>
+        ) : (
+          <div className="mt-6 space-y-6">
+            {/* Subscription / Payment */}
+            <section>
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+                <CreditCard className="h-4 w-4 text-gold-deep" /> Subscription & Payment
+              </h3>
+              {enrollments.length === 0 ? (
+                <p className="text-sm text-foreground/60">No active subscriptions.</p>
+              ) : (
+                <div className="space-y-2">
+                  {enrollments.map((e) => (
+                    <div key={e.id} className="border border-border rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{e.course?.title || "Course"}</p>
+                        <p className="text-xs text-foreground/60">
+                          Plan: <span className="font-mono">{e.plan}</span>
+                          {e.course?.price_monthly ? ` · $${e.course.price_monthly}/mo` : ""}
+                        </p>
+                      </div>
+                      <Badge variant={statusVariant(e.status)} className="capitalize">{e.status}</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Enrolled Courses */}
+            <section>
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+                <BookOpen className="h-4 w-4 text-gold-deep" /> Enrolled Courses ({enrollments.length})
+              </h3>
+              {enrollments.length === 0 ? (
+                <p className="text-sm text-foreground/60">No enrollments.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {enrollments.map((e) => (
+                    <li key={e.id} className="text-sm border-l-2 border-gold-deep/40 pl-3">
+                      <p className="font-medium">{e.course?.title || e.course_id.slice(0, 8)}</p>
+                      <p className="text-xs text-foreground/60">
+                        {e.course?.level || "—"} · {e.course?.duration || "—"} · enrolled {new Date(e.created_at).toLocaleDateString()}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {/* Attendance */}
+            <section>
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+                <CalendarCheck className="h-4 w-4 text-gold-deep" /> Attendance
+              </h3>
+              <div className="grid grid-cols-4 gap-2 mb-3">
+                <Stat label="Rate" value={`${attendanceRate}%`} />
+                <Stat label="Attended" value={attended} />
+                <Stat label="Upcoming" value={upcoming} />
+                <Stat label="Cancelled" value={cancelled} />
+              </div>
+              {classes.length === 0 ? (
+                <p className="text-sm text-foreground/60">No classes scheduled.</p>
+              ) : (
+                <ul className="space-y-1.5 max-h-56 overflow-y-auto">
+                  {classes.slice(0, 10).map((c) => (
+                    <li key={c.id} className="flex items-center justify-between text-sm border-b border-border/60 py-1.5">
+                      <span className="text-foreground/80">{new Date(c.starts_at).toLocaleString()}</span>
+                      <Badge variant={statusVariant(c.status)} className="capitalize">{c.status}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {/* Assignments / Progress */}
+            <section>
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+                <ClipboardList className="h-4 w-4 text-gold-deep" /> Assignments & Lesson Progress
+              </h3>
+              {progress.length === 0 ? (
+                <p className="text-sm text-foreground/60">No completed lessons yet.</p>
+              ) : (
+                <ul className="space-y-1.5 max-h-56 overflow-y-auto">
+                  {progress.map((p) => (
+                    <li key={p.id} className="flex items-center justify-between text-sm border-b border-border/60 py-1.5">
+                      <span className="text-foreground/80 truncate pr-2">{p.lesson?.title || p.lesson_id.slice(0, 8)}</span>
+                      <span className="text-xs text-foreground/60 shrink-0">{new Date(p.completed_at).toLocaleDateString()}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+const Stat = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <div className="border border-border rounded-lg p-2 text-center">
+    <p className="text-lg font-semibold">{value}</p>
+    <p className="text-[10px] uppercase tracking-wider text-foreground/60">{label}</p>
+  </div>
 );
 
 export default Admin;
