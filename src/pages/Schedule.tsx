@@ -348,25 +348,11 @@ const ClassCard = ({ c }: { c: ClassRow }) => {
       <p className="text-sm text-foreground/70 mb-1 flex items-center gap-1.5">
         <Clock className="h-3.5 w-3.5" /> {d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · {c.duration_min} min
       </p>
-      {c.meeting_url && state !== "completed" ? (
-        <Button
-          className="w-full mt-3"
-          variant={isLive ? "gold" : "ghost"}
-          disabled={!isLive}
-          asChild={isLive}
-        >
-          {isLive ? (
-            <a href={c.meeting_url} target="_blank" rel="noreferrer">
-              <Video className="h-4 w-4" /> Join Meeting
-            </a>
-          ) : (
-            <span><Video className="h-4 w-4" /> Join Meeting</span>
-          )}
-        </Button>
-      ) : state === "completed" ? (
-        <Button className="w-full mt-3" variant="ghost" disabled>Completed</Button>
-      ) : (
-        <p className="text-xs text-foreground/50 mt-3 text-center">No meeting link yet</p>
+      <div className="mt-3">
+        <JoinButton state={state} meetingUrl={c.meeting_url} startsAt={c.starts_at} fullWidth />
+      </div>
+      {!c.meeting_url && state !== "completed" && (
+        <p className="text-[11px] text-foreground/50 mt-2 text-center">Zoom link will appear here once your teacher adds it.</p>
       )}
     </article>
   );
