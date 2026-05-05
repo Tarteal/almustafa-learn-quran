@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
