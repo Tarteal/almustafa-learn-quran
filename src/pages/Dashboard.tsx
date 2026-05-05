@@ -141,6 +141,7 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <LangSwitcher />
+            <Button variant="gold" asChild><Link to="/schedule"><Calendar className="h-4 w-4" /> Schedule</Link></Button>
             <Button variant="emerald" asChild><Link to="/enroll"><Plus className="h-4 w-4" /> {t("dash.enroll")}</Link></Button>
             <Button variant="ghost" onClick={onSignOut}><LogOut className="h-4 w-4" /> {t("dash.signout")}</Button>
           </div>
