@@ -129,7 +129,11 @@ const StudentsPanel = () => {
     load();
   };
 
+  const [detailsId, setDetailsId] = useState<string | null>(null);
+
   if (loading) return <Loader />;
+
+  const detailsProfile = profiles.find((p) => p.id === detailsId) || null;
 
   return (
     <div className="space-y-6">
@@ -141,7 +145,8 @@ const StudentsPanel = () => {
                 <th className="px-6 sm:px-8 py-3">Name</th>
                 <th className="py-3">Phone</th>
                 <th className="py-3">Joined</th>
-                <th className="px-6 sm:px-8 py-3">Enrollments</th>
+                <th className="py-3">Enrollments</th>
+                <th className="px-6 sm:px-8 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -152,15 +157,26 @@ const StudentsPanel = () => {
                     <td className="px-6 sm:px-8 py-3 font-medium">{p.full_name || <span className="text-foreground/50">—</span>}</td>
                     <td className="py-3 text-foreground/70">{p.phone || "—"}</td>
                     <td className="py-3 text-foreground/70">{new Date(p.created_at).toLocaleDateString()}</td>
-                    <td className="px-6 sm:px-8 py-3">{count}</td>
+                    <td className="py-3">{count}</td>
+                    <td className="px-6 sm:px-8 py-3 text-right">
+                      <Button size="sm" variant="ghost" onClick={() => setDetailsId(p.id)}>
+                        <Eye className="h-4 w-4" /> View
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
-              {profiles.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-foreground/60">No students yet.</td></tr>}
+              {profiles.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-foreground/60">No students yet.</td></tr>}
             </tbody>
           </table>
         </div>
       </Panel>
+
+      <StudentDetailsDrawer
+        open={!!detailsId}
+        onClose={() => setDetailsId(null)}
+        profile={detailsProfile}
+      />
 
       <Panel title={`Enrollments (${enrollments.length})`}>
         <div className="overflow-x-auto -mx-6 sm:-mx-8">
