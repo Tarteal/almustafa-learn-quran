@@ -537,6 +537,13 @@ const LessonsPanel = () => {
                 <Field label="Duration (min)"><Input type="number" value={editing.duration_min ?? 30} onChange={(e) => setEditing({ ...editing, duration_min: Number(e.target.value) })} /></Field>
               </div>
               <Field label="Summary"><Textarea rows={3} value={editing.summary || ""} onChange={(e) => setEditing({ ...editing, summary: e.target.value })} /></Field>
+              <div className="flex items-center justify-between border border-border rounded-lg p-3">
+                <div>
+                  <p className="text-sm font-medium">Published</p>
+                  <p className="text-xs text-foreground/60">Visible to enrolled students.</p>
+                </div>
+                <Switch checked={!!editing.is_published} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
+              </div>
             </div>
           )}
           <DialogFooter>
@@ -545,6 +552,13 @@ const LessonsPanel = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <LessonMaterialsEditor
+        open={!!materialsLessonId}
+        onClose={() => setMaterialsLessonId(null)}
+        lessonId={materialsLessonId}
+        lessonTitle={items.find((l) => l.id === materialsLessonId)?.title}
+      />
     </Panel>
   );
 };
