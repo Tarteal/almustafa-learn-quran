@@ -11,6 +11,7 @@ import LangSwitcher from "./LangSwitcher";
 const Navbar = () => {
   const { t } = useI18n();
   const { user, signOut } = useAuth();
+  const { isTeacher } = useIsTeacher();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
