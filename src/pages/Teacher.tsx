@@ -115,6 +115,15 @@ const TeacherPage = () => {
           <StatCard icon={<Video className="h-5 w-5" />} label="Total classes" value={classes.length} />
         </div>
 
+        {teacherId && (
+          <ScheduleClass
+            teacherId={teacherId}
+            enrollments={enrollments}
+            enrLabel={enrLabel}
+            reload={load}
+          />
+        )}
+
         {loading ? (
           <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
         ) : (
