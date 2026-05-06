@@ -148,7 +148,7 @@ const Navbar = () => {
             {user ? (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+                  <Link to={dash.to} onClick={() => setOpen(false)}>{dash.label}</Link>
                 </Button>
                 <Button variant="ghost" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4" /> Sign out
