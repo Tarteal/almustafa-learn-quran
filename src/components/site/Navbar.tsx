@@ -96,7 +96,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link to={isTeacher ? "/teacher" : "/dashboard"}><LayoutDashboard className="h-4 w-4" /> {isTeacher ? "Teacher" : "Dashboard"}</Link>
+                <Link to={dash.to}><LayoutDashboard className="h-4 w-4" /> {dash.label}</Link>
               </Button>
               <Button variant="gold" size="sm" asChild>
                 <Link to="/enroll">Enroll</Link>
