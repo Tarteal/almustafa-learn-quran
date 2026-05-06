@@ -42,7 +42,7 @@ const Admin = () => {
         <div className="max-w-md w-full bg-card border-2 border-border ring-1 ring-foreground/5 rounded-2xl p-8 text-center shadow-elegant">
           <ShieldCheck className="h-10 w-10 mx-auto text-gold-deep mb-3" />
           <h1 className="font-display text-2xl mb-2">Admin access required</h1>
-          <p className="text-sm text-foreground/70 mb-6">
+          <p className="text-sm text-foreground mb-6">
             Your account isn't an admin. Ask an existing admin to grant the <code className="font-mono text-xs">admin</code> role to your user via the backend.
           </p>
           <Button asChild variant="emerald"><Link to="/dashboard"><ArrowLeft className="h-4 w-4" /> Back to dashboard</Link></Button>
@@ -156,9 +156,9 @@ const StudentsPanel = () => {
                 const count = enrollments.filter((e) => e.user_id === p.id).length;
                 return (
                   <tr key={p.id} className="border-b border-border/60">
-                    <td className="px-6 sm:px-8 py-3 font-medium">{p.full_name || <span className="text-foreground/50">—</span>}</td>
-                    <td className="py-3 text-foreground/70">{p.phone || "—"}</td>
-                    <td className="py-3 text-foreground/70">{new Date(p.created_at).toLocaleDateString()}</td>
+                    <td className="px-6 sm:px-8 py-3 font-medium">{p.full_name || <span className="text-foreground">—</span>}</td>
+                    <td className="py-3 text-foreground">{p.phone || "—"}</td>
+                    <td className="py-3 text-foreground">{new Date(p.created_at).toLocaleDateString()}</td>
                     <td className="py-3">{count}</td>
                     <td className="px-6 sm:px-8 py-3 text-right">
                       <Button size="sm" variant="ghost" onClick={() => setDetailsId(p.id)}>
@@ -196,7 +196,7 @@ const StudentsPanel = () => {
               {enrollments.map((e) => (
                 <tr key={e.id} className="border-b border-border/60">
                   <td className="px-6 sm:px-8 py-3 font-medium">{e.course?.title || e.course_id.slice(0, 8)}</td>
-                  <td className="py-3 text-foreground/70">{e.plan}</td>
+                  <td className="py-3 text-foreground">{e.plan}</td>
                   <td className="py-3">
                     <Select value={e.status} onValueChange={(v) => updateStatus(e.id, v)}>
                       <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
@@ -208,7 +208,7 @@ const StudentsPanel = () => {
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="py-3 text-foreground/70">{new Date(e.created_at).toLocaleDateString()}</td>
+                  <td className="py-3 text-foreground">{new Date(e.created_at).toLocaleDateString()}</td>
                   <td className="px-6 sm:px-8 py-3 text-right">
                     <ConfirmDelete onConfirm={() => deleteEnrollment(e.id)} label="Delete enrollment?" />
                   </td>
@@ -641,7 +641,7 @@ const ClassesPanel = () => {
                 <p className="font-medium truncate">{enrLabel(c.enrollment_id)}</p>
                 <p className="text-xs text-foreground truncate">
                   {teacherName(c.teacher_id)} · {d.toLocaleString()} · {c.duration_min} min · <span className="capitalize">{c.status}</span>
-                  {c.meeting_url ? <span className="text-emerald"> · Zoom ✓</span> : <span className="text-foreground/40"> · No link</span>}
+                  {c.meeting_url ? <span className="text-emerald"> · Zoom ✓</span> : <span className="text-foreground"> · No link</span>}
                 </p>
               </div>
               <div className="flex gap-1 shrink-0">
@@ -825,7 +825,7 @@ const StudentDetailsDrawer = ({
           <div className="mt-6 space-y-6">
             {/* Subscription / Payment */}
             <section>
-              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground mb-3">
                 <CreditCard className="h-4 w-4 text-gold-deep" /> Subscription & Payment
               </h3>
               {enrollments.length === 0 ? (
@@ -850,7 +850,7 @@ const StudentDetailsDrawer = ({
 
             {/* Enrolled Courses */}
             <section>
-              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground mb-3">
                 <BookOpen className="h-4 w-4 text-gold-deep" /> Enrolled Courses ({enrollments.length})
               </h3>
               {enrollments.length === 0 ? (
@@ -871,7 +871,7 @@ const StudentDetailsDrawer = ({
 
             {/* Attendance */}
             <section>
-              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground mb-3">
                 <CalendarCheck className="h-4 w-4 text-gold-deep" /> Attendance
               </h3>
               <div className="grid grid-cols-4 gap-2 mb-3">
@@ -886,7 +886,7 @@ const StudentDetailsDrawer = ({
                 <ul className="space-y-1.5 max-h-56 overflow-y-auto">
                   {classes.slice(0, 10).map((c) => (
                     <li key={c.id} className="flex items-center justify-between text-sm border-b border-border/60 py-1.5">
-                      <span className="text-foreground/80">{new Date(c.starts_at).toLocaleString()}</span>
+                      <span className="text-foreground">{new Date(c.starts_at).toLocaleString()}</span>
                       <Badge variant={statusVariant(c.status)} className="capitalize">{c.status}</Badge>
                     </li>
                   ))}
@@ -896,7 +896,7 @@ const StudentDetailsDrawer = ({
 
             {/* Assignments / Progress */}
             <section>
-              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/70 mb-3">
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground mb-3">
                 <ClipboardList className="h-4 w-4 text-gold-deep" /> Assignments & Lesson Progress
               </h3>
               {progress.length === 0 ? (
@@ -905,7 +905,7 @@ const StudentDetailsDrawer = ({
                 <ul className="space-y-1.5 max-h-56 overflow-y-auto">
                   {progress.map((p) => (
                     <li key={p.id} className="flex items-center justify-between text-sm border-b border-border/60 py-1.5">
-                      <span className="text-foreground/80 truncate pr-2">{p.lesson?.title || p.lesson_id.slice(0, 8)}</span>
+                      <span className="text-foreground truncate pr-2">{p.lesson?.title || p.lesson_id.slice(0, 8)}</span>
                       <span className="text-xs text-foreground shrink-0">{new Date(p.completed_at).toLocaleDateString()}</span>
                     </li>
                   ))}
