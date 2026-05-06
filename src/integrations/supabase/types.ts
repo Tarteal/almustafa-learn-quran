@@ -475,6 +475,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_current_user_admin: { Args: never; Returns: boolean }
       is_teacher_of: { Args: { _teacher_id: string }; Returns: boolean }
     }
     Enums: {
