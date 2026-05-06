@@ -28,10 +28,11 @@ const Navbar = () => {
 
   // On non-home pages, the page background is light, so white text is unreadable.
   // Use foreground color for inner pages, and white for the home hero overlay.
-  const brandText = isHome ? "text-white" : "text-foreground";
-  const linkText = isHome ? "text-white/80" : "text-foreground/80";
-  const mobileLinkText = isHome ? "text-white/90" : "text-foreground/90";
-  const iconText = isHome ? "text-white" : "text-foreground";
+  const onLight = !isHome || scrolled;
+  const brandText = onLight ? "text-foreground" : "text-white";
+  const linkText = onLight ? "text-foreground/80" : "text-white/80";
+  const mobileLinkText = onLight ? "text-foreground/90" : "text-white/90";
+  const iconText = onLight ? "text-foreground" : "text-white";
 
   const handleSignOut = async () => {
     await signOut();
@@ -92,7 +93,7 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <LangSwitcher onLight={!isHome} />
+          <LangSwitcher onLight={onLight} />
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
@@ -118,7 +119,7 @@ const Navbar = () => {
         </div>
 
         <div className="lg:hidden flex items-center gap-2">
-          <LangSwitcher onLight={!isHome} />
+          <LangSwitcher onLight={onLight} />
           <button
             className={`p-2 rounded-md ${iconText}`}
             onClick={() => setOpen(!open)}
