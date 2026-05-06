@@ -11,8 +11,17 @@ const Navbar = () => {
   const { t } = useI18n();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  // On non-home pages, the page background is light, so white text is unreadable.
+  // Use foreground color for inner pages, and white for the home hero overlay.
+  const brandText = isHome ? "text-white" : "text-foreground";
+  const linkText = isHome ? "text-white/80" : "text-foreground/80";
+  const mobileLinkText = isHome ? "text-white/90" : "text-foreground/90";
+  const iconText = isHome ? "text-white" : "text-foreground";
 
   const handleSignOut = async () => {
     await signOut();
