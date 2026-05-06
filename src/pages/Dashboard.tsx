@@ -187,14 +187,14 @@ const Dashboard = () => {
                                 {teacher.full_name}
                               </Link>
                             </h3>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground mt-0.5">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground/70 mt-0.5">
                               {teacher.specialization && <span>{teacher.specialization}</span>}
                               {teacher.country && (
                                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {teacher.country}</span>
                               )}
                             </div>
                             {teacher.bio && (
-                              <p className="text-xs text-foreground mt-2 line-clamp-2">{teacher.bio}</p>
+                              <p className="text-xs text-foreground/70 mt-2 line-clamp-2">{teacher.bio}</p>
                             )}
                           </div>
                         </div>
@@ -220,11 +220,11 @@ const Dashboard = () => {
                         </div>
 
                         <div className="border-t border-border pt-4">
-                          <p className="text-xs uppercase tracking-wider text-foreground mb-3 flex items-center gap-1.5">
+                          <p className="text-xs uppercase tracking-wider text-foreground/70 mb-3 flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5" /> {t("dash.upcoming")}
                           </p>
                           {upcoming.length === 0 ? (
-                            <p className="text-xs text-foreground">{t("dash.upcoming.none")}</p>
+                            <p className="text-xs text-foreground/70">{t("dash.upcoming.none")}</p>
                           ) : (
                             <ul className="space-y-2">
                               {upcoming.map((c) => {
@@ -235,7 +235,7 @@ const Dashboard = () => {
                                       <p className="font-medium text-foreground">
                                         {d.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}
                                       </p>
-                                      <p className="text-xs text-foreground">
+                                      <p className="text-xs text-foreground/70">
                                         {d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} {t("dash.minutes")}
                                       </p>
                                     </div>
@@ -263,7 +263,7 @@ const Dashboard = () => {
                         </div>
                       </>
                     ) : (
-                      <p className="text-sm text-foreground">{t("dash.teachers.pending")}</p>
+                      <p className="text-sm text-foreground/70">{t("dash.teachers.pending")}</p>
                     )}
                   </article>
                 );
@@ -278,7 +278,7 @@ const Dashboard = () => {
             <Sparkles className="h-5 w-5 text-gold-deep" /> {t("dash.nextup")}
           </h2>
           {recommendations.length === 0 ? (
-            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 sm:p-8 text-sm text-foreground shadow-card">
+            <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 sm:p-8 text-sm text-foreground/70 shadow-card">
               {enrollments.length === 0 ? t("dash.nextup.none.empty") : t("dash.nextup.none.done")}
             </div>
           ) : (
@@ -287,9 +287,9 @@ const Dashboard = () => {
                 <article key={lesson.id} className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-6 shadow-elegant hover:shadow-elegant hover:-translate-y-1 transition-smooth flex flex-col">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gold-deep mb-1">{course?.title}</p>
                   <h3 className="font-display text-lg mb-1">{t("dash.lesson")} {lesson.order_index}: {lesson.title}</h3>
-                  <p className="text-xs text-foreground flex-1">{lesson.summary}</p>
+                  <p className="text-xs text-foreground/70 flex-1">{lesson.summary}</p>
                   <div className="flex items-center justify-between mt-4">
-                    <span className="text-xs text-foreground">{lesson.duration_min} {t("dash.minutes")}</span>
+                    <span className="text-xs text-foreground/70">{lesson.duration_min} {t("dash.minutes")}</span>
                     <Button size="sm" variant="gold" onClick={() => onToggleLesson(lesson.id, false)}>
                       <PlayCircle className="h-4 w-4" /> {t("dash.start")}
                     </Button>
@@ -306,7 +306,7 @@ const Dashboard = () => {
           {enrollments.length === 0 ? (
             <div className="bg-card border-2 border-border rounded-2xl ring-1 ring-foreground/5 p-10 sm:p-12 text-center shadow-card">
               <BookOpen className="h-10 w-10 mx-auto text-gold-deep mb-3" />
-              <p className="text-foreground mb-4">{t("dash.empty.title")}</p>
+              <p className="text-foreground/70 mb-4">{t("dash.empty.title")}</p>
               <Button variant="gold" asChild><Link to="/enroll">{t("dash.browse")}</Link></Button>
             </div>
           ) : (
@@ -324,16 +324,16 @@ const Dashboard = () => {
                           <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
                             en.status === "active" ? "bg-emerald/15 text-emerald" :
                             en.status === "pending" ? "bg-gold/15 text-gold-deep" :
-                            "bg-muted text-foreground"
+                            "bg-muted text-foreground/70"
                           }`}>{statusLabel(en.status)}</span>
                         </div>
-                        <p className="text-xs text-foreground">
+                        <p className="text-xs text-foreground/70">
                           {en.plan} {t("dash.plan")} · {en.courses?.duration} · <span className="capitalize">{en.courses?.level}</span> · {t("dash.enrolled")} {new Date(en.created_at).toLocaleDateString(locale)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-display text-2xl text-foreground">{pct}%</p>
-                        <p className="text-xs text-foreground">{done}/{courseLessons.length} {t("dash.lessons.count")}</p>
+                        <p className="text-xs text-foreground/70">{done}/{courseLessons.length} {t("dash.lessons.count")}</p>
                       </div>
                     </div>
                     <Progress value={pct} className="h-2 mb-4" />
@@ -352,12 +352,12 @@ const Dashboard = () => {
                               {isDone && <Check className="h-3.5 w-3.5" />}
                             </button>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-sm ${isDone ? "line-through text-foreground" : "text-foreground"}`}>
-                                <span className="text-foreground mr-2">{l.order_index}.</span>{l.title}
+                              <p className={`text-sm ${isDone ? "line-through text-foreground/70" : "text-foreground"}`}>
+                                <span className="text-foreground/70 mr-2">{l.order_index}.</span>{l.title}
                               </p>
-                              <p className="text-xs text-foreground truncate">{l.summary}</p>
+                              <p className="text-xs text-foreground/70 truncate">{l.summary}</p>
                             </div>
-                            <span className="text-xs text-foreground shrink-0">{l.duration_min}{t("dash.minutes") === "min" ? "m" : ` ${t("dash.minutes")}`}</span>
+                            <span className="text-xs text-foreground/70 shrink-0">{l.duration_min}{t("dash.minutes") === "min" ? "m" : ` ${t("dash.minutes")}`}</span>
                           </li>
                         );
                       })}
@@ -380,7 +380,7 @@ const StatCard = ({ icon: Icon, label, value, accent }: { icon: any; label: stri
         <Icon className="h-5 w-5" />
       </div>
       <div>
-        <p className="text-xs text-foreground uppercase tracking-wider">{label}</p>
+        <p className="text-xs text-foreground/70 uppercase tracking-wider">{label}</p>
         <p className="font-display text-2xl">{value}</p>
       </div>
     </div>

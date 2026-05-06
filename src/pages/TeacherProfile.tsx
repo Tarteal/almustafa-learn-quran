@@ -156,7 +156,7 @@ const TeacherProfile = () => {
         {teacher.bio && (
           <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-card mb-6">
             <h2 className="font-display text-xl mb-3">{t("teacher.about")}</h2>
-            <p className="text-foreground leading-relaxed whitespace-pre-line">{teacher.bio}</p>
+            <p className="text-foreground/80 leading-relaxed whitespace-pre-line">{teacher.bio}</p>
           </section>
         )}
 

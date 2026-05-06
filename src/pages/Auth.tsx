@@ -89,7 +89,7 @@ const Auth = () => {
             <span className="font-arabic text-gold text-xl">ﷲ</span>
           </div>
           <h1 className="font-display text-2xl text-foreground">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
-          <p className="text-sm text-foreground mt-1">
+          <p className="text-sm text-foreground/70 mt-1">
             {mode === "signup" ? "Begin your Quran journey today." : "Continue your learning."}
           </p>
         </div>
@@ -106,7 +106,7 @@ const Auth = () => {
 
         <div className="relative mb-4">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-foreground font-medium">or</span></div>
+          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-foreground/60 font-medium">or</span></div>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -135,13 +135,13 @@ const Auth = () => {
           </Button>
         </form>
 
-        <p className="text-sm text-center text-foreground mt-6">
+        <p className="text-sm text-center text-foreground/70 mt-6">
           {mode === "signup" ? "Already have an account?" : "New here?"}{" "}
           <button className="text-primary font-semibold hover:underline" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
             {mode === "signup" ? "Sign in" : "Create account"}
           </button>
         </p>
-        <p className="text-xs text-center text-foreground mt-4">
+        <p className="text-xs text-center text-foreground/60 mt-4">
           <Link to="/" className="hover:text-primary">← Back to home</Link>
         </p>
       </div>

@@ -24,7 +24,7 @@ const renderBlock = (b: Block, i: number) => {
       );
     case "p":
       return (
-        <p key={i} className="text-lg leading-relaxed text-foreground mb-5">
+        <p key={i} className="text-lg leading-relaxed text-foreground/85 mb-5">
           {b.text}
         </p>
       );
@@ -32,7 +32,7 @@ const renderBlock = (b: Block, i: number) => {
       return (
         <ul key={i} className="space-y-3 mb-6 ml-1">
           {b.items.map((item, j) => (
-            <li key={j} className="flex gap-3 text-foreground leading-relaxed">
+            <li key={j} className="flex gap-3 text-foreground/85 leading-relaxed">
               <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0" />
               <span>{item}</span>
             </li>
@@ -43,7 +43,7 @@ const renderBlock = (b: Block, i: number) => {
       return (
         <blockquote
           key={i}
-          className="my-8 border-l-4 border-gold pl-6 py-2 italic text-xl font-display text-foreground"
+          className="my-8 border-l-4 border-gold pl-6 py-2 italic text-xl font-display text-foreground/90"
         >
           "{b.text}"
           {b.cite && <footer className="not-italic text-sm font-sans text-muted-foreground mt-2">— {b.cite}</footer>}
@@ -60,7 +60,7 @@ const renderBlock = (b: Block, i: number) => {
             <p className="font-arabic text-3xl md:text-4xl text-gold-light leading-relaxed mb-4">
               {b.arabic}
             </p>
-            <p className="text-background italic mb-2">"{b.translation}"</p>
+            <p className="text-background/90 italic mb-2">"{b.translation}"</p>
             <p className="text-xs uppercase tracking-[0.25em] text-gold-light">{b.ref}</p>
           </div>
         </div>
@@ -99,7 +99,7 @@ const ShareButtons = ({ title, url }: { title: string; url: string }) => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Share on ${l.label}`}
-          className="h-9 w-9 rounded-full border border-border hover:border-gold/60 hover:bg-gold/10 grid place-items-center text-foreground hover:text-foreground transition-smooth"
+          className="h-9 w-9 rounded-full border border-border hover:border-gold/60 hover:bg-gold/10 grid place-items-center text-foreground/70 hover:text-foreground transition-smooth"
         >
           <l.icon className="h-4 w-4" />
         </a>
@@ -107,7 +107,7 @@ const ShareButtons = ({ title, url }: { title: string; url: string }) => {
       <button
         onClick={onCopy}
         aria-label="Copy link"
-        className="h-9 w-9 rounded-full border border-border hover:border-gold/60 hover:bg-gold/10 grid place-items-center text-foreground hover:text-foreground transition-smooth"
+        className="h-9 w-9 rounded-full border border-border hover:border-gold/60 hover:bg-gold/10 grid place-items-center text-foreground/70 hover:text-foreground transition-smooth"
       >
         {copied ? <Check className="h-4 w-4 text-emerald" /> : <Link2 className="h-4 w-4" />}
       </button>
@@ -157,7 +157,7 @@ const BlogPost = () => {
         <div className="container relative">
           <Link
             to="/#blog"
-            className="inline-flex items-center gap-2 text-sm text-background hover:text-background mb-8 transition-smooth"
+            className="inline-flex items-center gap-2 text-sm text-background/80 hover:text-background mb-8 transition-smooth"
           >
             <ArrowLeft className="h-4 w-4 rtl-flip" /> Back to all articles
           </Link>
@@ -169,17 +169,17 @@ const BlogPost = () => {
             <h1 className="font-display text-4xl md:text-6xl font-semibold leading-[1.1] mb-6">
               {post.title}
             </h1>
-            <p className="text-lg md:text-xl text-background mb-8 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-background/85 mb-8 max-w-2xl leading-relaxed">
               {post.excerpt}
             </p>
-            <div className="flex flex-wrap items-center gap-5 text-sm text-background">
+            <div className="flex flex-wrap items-center gap-5 text-sm text-background/80">
               <div className="flex items-center gap-2.5">
                 <div className="h-10 w-10 rounded-full bg-background/15 border border-gold/40 grid place-items-center font-display text-gold-light">
                   {post.author.initial}
                 </div>
                 <div>
                   <div className="font-medium text-background">{post.author.name}</div>
-                  <div className="text-xs text-background">{post.author.role}</div>
+                  <div className="text-xs text-background/60">{post.author.role}</div>
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
