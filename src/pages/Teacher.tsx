@@ -170,6 +170,70 @@ const Empty = ({ text }: { text: string }) => (
   <div className="bg-card border border-border rounded-xl p-6 text-center text-sm text-foreground/60">{text}</div>
 );
 
+const sameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+const CalendarView = ({
+  classes,
+  enrLabel,
+}: {
+  classes: ClassRow[];
+  enrLabel: (eid: string) => string;
+}) => {
+  const [selected, setSelected] = useState<Date | undefined>(new Date());
+  const classDates = classes.map((c) => new Date(c.starts_at));
+  const dayClasses = selected
+    ? classes
+        .filter((c) => sameDay(new Date(c.starts_at), selected))
+        .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
+    : [];
+
+  return (
+    <section className="mb-10">
+      <h2 className="font-display text-xl mb-4">Calendar</h2>
+      <div className="bg-card border-2 border-border rounded-2xl p-5 shadow-elegant grid md:grid-cols-[auto_1fr] gap-6">
+        <Calendar
+          mode="single"
+          selected={selected}
+          onSelect={setSelected}
+          modifiers={{ hasClass: classDates }}
+          modifiersClassNames={{
+            hasClass: "relative font-semibold text-emerald after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-emerald",
+          }}
+          className={cn("p-3 pointer-events-auto rounded-lg border border-border")}
+        />
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-wider text-foreground/60 mb-3">
+            {selected ? selected.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : "Pick a day"}
+          </p>
+          {dayClasses.length === 0 ? (
+            <Empty text="No classes on this day." />
+          ) : (
+            <ul className="space-y-2">
+              {dayClasses.map((c) => {
+                const d = new Date(c.starts_at);
+                return (
+                  <li key={c.id} className="flex items-center justify-between gap-3 border border-border rounded-xl p-3 bg-background/40">
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{enrLabel(c.enrollment_id)}</p>
+                      <p className="text-xs text-foreground/60">
+                        {d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · {c.duration_min} min
+                      </p>
+                    </div>
+                    <Badge variant={c.status === "completed" ? "default" : c.status === "cancelled" ? "destructive" : "secondary"} className="capitalize shrink-0">
+                      {c.status}
+                    </Badge>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const ScheduleClass = ({
   teacherId, enrollments, enrLabel, reload,
 }: {
