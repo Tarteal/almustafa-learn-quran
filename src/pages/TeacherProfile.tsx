@@ -97,7 +97,7 @@ const TeacherProfile = () => {
   const initial = teacher.full_name.split(" ").slice(-1)[0]?.[0] || "T";
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-overlay">
+    <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-bg">
       <SEO title={`${teacher.full_name} · Almustafa Quran Academy`} description={teacher.bio || `Profile of ${teacher.full_name}`} />
       <div className="container max-w-4xl">
         <Button variant="ghost" size="sm" asChild className="mb-6">

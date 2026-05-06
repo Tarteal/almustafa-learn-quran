@@ -83,7 +83,7 @@ const Enroll = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-overlay">
+    <main className="min-h-screen pt-28 pb-20 px-4 bg-secondary/30 pattern-bg">
       <SEO title="Enroll · Almustafa Quran Academy" description="Choose your course and plan to begin learning the Quran with certified scholars." />
       <div className="container max-w-4xl">
         <div className="text-center mb-10">

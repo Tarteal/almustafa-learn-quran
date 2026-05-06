@@ -81,7 +81,7 @@ const Auth = () => {
   };
 
   return (
-    <main className="min-h-screen grid place-items-center px-4 py-24 bg-background pattern-overlay">
+    <main className="min-h-screen grid place-items-center px-4 py-24 bg-background pattern-bg">
       <SEO title={mode === "signup" ? "Create Account · Almustafa Quran Academy" : "Sign In · Almustafa Quran Academy"} description="Sign in or create your student account to enroll in Quran courses." />
       <div className="w-full max-w-md bg-card border-2 border-border rounded-2xl shadow-elegant p-8 ring-1 ring-foreground/5">
         <div className="text-center mb-6">
