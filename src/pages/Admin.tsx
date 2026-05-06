@@ -420,7 +420,7 @@ const CoursesPanel = () => {
 };
 
 /* ---------------- Lessons ---------------- */
-const emptyLesson: Partial<Lesson> = { title: "", summary: "", order_index: 0, duration_min: 30, course_id: "" };
+const emptyLesson: Partial<Lesson> = { title: "", summary: "", order_index: 0, duration_min: 30, course_id: "", is_published: false };
 
 const LessonsPanel = () => {
   const [items, setItems] = useState<Lesson[]>([]);
