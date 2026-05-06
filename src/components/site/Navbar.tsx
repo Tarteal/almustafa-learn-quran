@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/auth/AuthContext";
 import { useIsTeacher } from "@/hooks/useIsTeacher";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LangSwitcher from "./LangSwitcher";
 import logo from "@/assets/logo.png";
 
