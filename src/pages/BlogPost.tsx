@@ -24,7 +24,7 @@ const renderBlock = (b: Block, i: number) => {
       );
     case "p":
       return (
-        <p key={i} className="text-lg leading-relaxed text-foreground/85 mb-5">
+        <p key={i} className="text-lg leading-relaxed text-foreground mb-5">
           {b.text}
         </p>
       );
@@ -32,7 +32,7 @@ const renderBlock = (b: Block, i: number) => {
       return (
         <ul key={i} className="space-y-3 mb-6 ml-1">
           {b.items.map((item, j) => (
-            <li key={j} className="flex gap-3 text-foreground/85 leading-relaxed">
+            <li key={j} className="flex gap-3 text-foreground leading-relaxed">
               <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0" />
               <span>{item}</span>
             </li>
@@ -169,7 +169,7 @@ const BlogPost = () => {
             <h1 className="font-display text-4xl md:text-6xl font-semibold leading-[1.1] mb-6">
               {post.title}
             </h1>
-            <p className="text-lg md:text-xl text-background/85 mb-8 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-background mb-8 max-w-2xl leading-relaxed">
               {post.excerpt}
             </p>
             <div className="flex flex-wrap items-center gap-5 text-sm text-background">
