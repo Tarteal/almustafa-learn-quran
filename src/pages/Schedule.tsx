@@ -221,7 +221,7 @@ const Schedule = () => {
             <Calendar className="h-5 w-5 text-gold-deep" /> Today's Classes
           </h2>
           {today.length === 0 ? (
-            <div className="bg-card border-2 border-border rounded-2xl p-8 text-sm text-foreground/70 text-center shadow-card">
+            <div className="bg-card border-2 border-border rounded-2xl p-8 text-sm text-foreground text-center shadow-card">
               No classes scheduled for today.
             </div>
           ) : (
@@ -251,7 +251,7 @@ const Schedule = () => {
                       <td className="px-4 py-3 align-top font-medium">{day}</td>
                       <td className="px-4 py-3">
                         {weekly[i].length === 0 ? (
-                          <span className="text-foreground/40 text-xs">—</span>
+                          <span className="text-foreground text-xs">—</span>
                         ) : (
                           <div className="space-y-2">
                             {weekly[i].map((c) => {
@@ -259,7 +259,7 @@ const Schedule = () => {
                               const state = liveState(c);
                               return (
                                 <div key={c.id} className="flex flex-wrap items-center gap-3">
-                                  <span className="font-mono text-xs text-foreground/80 w-20">
+                                  <span className="font-mono text-xs text-foreground w-20">
                                     {d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                   </span>
                                   <span className="font-medium text-foreground">{c.enrollment?.course?.title || "Class"}</span>
@@ -311,10 +311,10 @@ const NextClassHero = ({ c }: { c: ClassRow }) => {
         <h2 className="font-display text-2xl sm:text-3xl text-background mb-2">
           {c.enrollment?.course?.title || "Class"}
         </h2>
-        <p className="text-sm text-background/80 mb-1 flex items-center gap-1.5">
+        <p className="text-sm text-background mb-1 flex items-center gap-1.5">
           <GraduationCap className="h-4 w-4" /> {c.teacher?.full_name || "Teacher TBA"}
         </p>
-        <p className="text-sm text-background/80 mb-4 flex items-center gap-1.5">
+        <p className="text-sm text-background mb-4 flex items-center gap-1.5">
           <Clock className="h-4 w-4" /> {start.toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} · {c.duration_min} min
         </p>
         <div className="flex flex-wrap items-center gap-3">
@@ -345,14 +345,14 @@ const ClassCard = ({ c }: { c: ClassRow }) => {
         <StatusBadge state={state} />
       </div>
       <h3 className="font-display text-lg mb-1">{c.teacher?.full_name || "Teacher"}</h3>
-      <p className="text-sm text-foreground/70 mb-1 flex items-center gap-1.5">
+      <p className="text-sm text-foreground mb-1 flex items-center gap-1.5">
         <Clock className="h-3.5 w-3.5" /> {d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · {c.duration_min} min
       </p>
       <div className="mt-3">
         <JoinButton state={state} meetingUrl={c.meeting_url} startsAt={c.starts_at} fullWidth />
       </div>
       {!c.meeting_url && state !== "completed" && (
-        <p className="text-[11px] text-foreground/50 mt-2 text-center">Zoom link will appear here once your teacher adds it.</p>
+        <p className="text-[11px] text-foreground mt-2 text-center">Zoom link will appear here once your teacher adds it.</p>
       )}
     </article>
   );

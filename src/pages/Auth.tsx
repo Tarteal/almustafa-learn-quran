@@ -89,7 +89,7 @@ const Auth = () => {
             <span className="font-arabic text-gold text-xl">ﷲ</span>
           </div>
           <h1 className="font-display text-2xl text-foreground">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
-          <p className="text-sm text-foreground/70 mt-1">
+          <p className="text-sm text-foreground mt-1">
             {mode === "signup" ? "Begin your Quran journey today." : "Continue your learning."}
           </p>
         </div>
@@ -135,7 +135,7 @@ const Auth = () => {
           </Button>
         </form>
 
-        <p className="text-sm text-center text-foreground/70 mt-6">
+        <p className="text-sm text-center text-foreground mt-6">
           {mode === "signup" ? "Already have an account?" : "New here?"}{" "}
           <button className="text-primary font-semibold hover:underline" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>
             {mode === "signup" ? "Sign in" : "Create account"}
