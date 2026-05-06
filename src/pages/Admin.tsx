@@ -226,7 +226,7 @@ const StudentsPanel = () => {
 };
 
 /* ---------------- Teachers ---------------- */
-const emptyTeacher: Partial<Teacher> = { full_name: "", email: "", whatsapp: "", country: "", specialization: "", bio: "", years_experience: 0, topics: [], avatar_url: "" };
+const emptyTeacher: Partial<Teacher> = { full_name: "", email: "", whatsapp: "", country: "", specialization: "", bio: "", years_experience: 0, topics: [], avatar_url: "", user_id: "" };
 
 const TeachersPanel = () => {
   const [items, setItems] = useState<Teacher[]>([]);
