@@ -106,12 +106,19 @@
     border-top-right-radius: 50% 30%;
   }
 
-  /* Pattern overlay */
+  /* Pattern overlay — use on an absolutely-positioned overlay div, NOT directly on a content wrapper (it dims everything inside). */
   .pattern-overlay {
     background-image: url('/src/assets/pattern.png');
     background-size: 280px;
     background-repeat: repeat;
     opacity: 0.06;
+  }
+
+  /* Pattern background — same texture, no opacity. Safe to apply directly on a page <main>. */
+  .pattern-bg {
+    background-image: url('/src/assets/pattern.png');
+    background-size: 280px;
+    background-repeat: repeat;
   }
 
   .divider-ornament {
