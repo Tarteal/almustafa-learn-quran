@@ -429,6 +429,7 @@ const LessonsPanel = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Partial<Lesson> | null>(null);
+  const [materialsLessonId, setMaterialsLessonId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
