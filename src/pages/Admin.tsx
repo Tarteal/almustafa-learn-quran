@@ -322,6 +322,13 @@ const TeachersPanel = () => {
               <Field label="Topics (comma separated)"><Input value={Array.isArray(editing.topics) ? editing.topics.join(", ") : (editing.topics as any) || ""} onChange={(e) => setEditing({ ...editing, topics: e.target.value as any })} /></Field>
               <Field label="Avatar URL"><Input value={editing.avatar_url || ""} onChange={(e) => setEditing({ ...editing, avatar_url: e.target.value })} /></Field>
               <Field label="Bio"><Textarea rows={3} value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} /></Field>
+              <Field label="Linked user ID (auth.users.id) — gives this teacher login access">
+                <Input
+                  placeholder="UUID from auth — paste user id"
+                  value={editing.user_id || ""}
+                  onChange={(e) => setEditing({ ...editing, user_id: e.target.value })}
+                />
+              </Field>
             </div>
           )}
           <DialogFooter>
