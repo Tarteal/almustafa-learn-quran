@@ -107,7 +107,7 @@ const Navbar = () => {
         <div className="lg:hidden flex items-center gap-2">
           <LangSwitcher />
           <button
-            className="p-2 rounded-md text-white"
+            className={`p-2 rounded-md ${iconText}`}
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
