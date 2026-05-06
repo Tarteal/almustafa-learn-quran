@@ -106,13 +106,28 @@
     border-top-right-radius: 50% 30%;
   }
 
-  /* Pattern overlay */
+  /* Pattern overlay — use on an absolutely-positioned overlay div, NOT directly on a content wrapper (it dims everything inside). */
   .pattern-overlay {
     background-image: url('/src/assets/pattern.png');
     background-size: 280px;
     background-repeat: repeat;
     opacity: 0.06;
   }
+
+  /* Pattern background — subtle texture via pseudo-element so content opacity isn't affected. Safe on page <main>. */
+  .pattern-bg { position: relative; }
+  .pattern-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/src/assets/pattern.png');
+    background-size: 280px;
+    background-repeat: repeat;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .pattern-bg > * { position: relative; z-index: 1; }
 
   .divider-ornament {
     position: relative;

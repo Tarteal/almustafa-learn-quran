@@ -52,7 +52,7 @@ const Admin = () => {
   }
 
   return (
-    <main className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-background pattern-overlay">
+    <main className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-background pattern-bg">
       <SEO title="Admin · Almustafa Quran Academy" description="Manage students, teachers, courses, and lessons." />
       <div className="container max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4 mb-10">
