@@ -259,11 +259,17 @@ const TeachersPanel = () => {
       years_experience: editing.years_experience ? Number(editing.years_experience) : null,
       avatar_url: editing.avatar_url || null,
       topics: typeof editing.topics === "string" ? (editing.topics as any).split(",").map((s: string) => s.trim()).filter(Boolean) : (editing.topics || []),
+      user_id: editing.user_id ? editing.user_id : null,
     };
     const res = editing.id
       ? await supabase.from("teachers").update(payload).eq("id", editing.id)
       : await supabase.from("teachers").insert(payload);
     if (res.error) return toast.error(res.error.message);
+    // If linked to a user, also grant 'teacher' role
+    if (editing.user_id) {
+      await supabase.from("user_roles").insert({ user_id: editing.user_id, role: "teacher" as any });
+      // ignore unique conflict
+    }
     toast.success(editing.id ? "Teacher updated" : "Teacher created");
     setDialogOpen(false); setEditing(null); load();
   };
