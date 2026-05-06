@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video } from "lucide-react";
+import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video, Paperclip } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import LessonMaterialsEditor from "@/components/admin/LessonMaterialsEditor";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
@@ -21,7 +23,7 @@ type Profile = { id: string; full_name: string | null; phone: string | null; cre
 type Enrollment = { id: string; user_id: string; course_id: string; plan: string; status: string; created_at: string };
 type Course = { id: string; title: string; slug: string; level: string | null; duration: string | null; price_monthly: number | null; description: string | null; plan: string | null };
 type Teacher = { id: string; full_name: string; email: string | null; whatsapp: string | null; country: string | null; specialization: string | null; bio: string | null; years_experience: number | null; topics: string[]; avatar_url: string | null };
-type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number };
+type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number; is_published?: boolean };
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -418,7 +420,7 @@ const CoursesPanel = () => {
 };
 
 /* ---------------- Lessons ---------------- */
-const emptyLesson: Partial<Lesson> = { title: "", summary: "", order_index: 0, duration_min: 30, course_id: "" };
+const emptyLesson: Partial<Lesson> = { title: "", summary: "", order_index: 0, duration_min: 30, course_id: "", is_published: false };
 
 const LessonsPanel = () => {
   const [items, setItems] = useState<Lesson[]>([]);
@@ -427,6 +429,7 @@ const LessonsPanel = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Partial<Lesson> | null>(null);
+  const [materialsLessonId, setMaterialsLessonId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -449,6 +452,7 @@ const LessonsPanel = () => {
       order_index: Number(editing.order_index || 0),
       duration_min: Number(editing.duration_min || 30),
       course_id: editing.course_id,
+      is_published: !!editing.is_published,
     };
     const res = editing.id
       ? await supabase.from("lessons").update(payload).eq("id", editing.id)
@@ -492,10 +496,20 @@ const LessonsPanel = () => {
           <div key={l.id} className="border border-border rounded-xl p-3 flex items-center gap-3">
             <span className="font-mono text-xs text-foreground/60 w-8 text-center">{l.order_index}</span>
             <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">{l.title}</p>
+              <p className="font-medium truncate flex items-center gap-2">
+                {l.title}
+                {l.is_published ? (
+                  <Badge variant="default" className="text-[10px]">Published</Badge>
+                ) : (
+                  <Badge variant="secondary" className="text-[10px]">Draft</Badge>
+                )}
+              </p>
               <p className="text-xs text-foreground/60 truncate">{courseTitle(l.course_id)} · {l.duration_min} min</p>
             </div>
             <div className="flex gap-1 shrink-0">
+              <Button size="sm" variant="outline" onClick={() => setMaterialsLessonId(l.id)}>
+                <Paperclip className="h-4 w-4" /> Materials
+              </Button>
               <Button size="icon" variant="ghost" onClick={() => { setEditing({ ...l }); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
               <ConfirmDelete onConfirm={() => remove(l.id)} label={`Delete "${l.title}"?`} />
             </div>
@@ -523,6 +537,13 @@ const LessonsPanel = () => {
                 <Field label="Duration (min)"><Input type="number" value={editing.duration_min ?? 30} onChange={(e) => setEditing({ ...editing, duration_min: Number(e.target.value) })} /></Field>
               </div>
               <Field label="Summary"><Textarea rows={3} value={editing.summary || ""} onChange={(e) => setEditing({ ...editing, summary: e.target.value })} /></Field>
+              <div className="flex items-center justify-between border border-border rounded-lg p-3">
+                <div>
+                  <p className="text-sm font-medium">Published</p>
+                  <p className="text-xs text-foreground/60">Visible to enrolled students.</p>
+                </div>
+                <Switch checked={!!editing.is_published} onCheckedChange={(v) => setEditing({ ...editing, is_published: v })} />
+              </div>
             </div>
           )}
           <DialogFooter>
@@ -531,6 +552,13 @@ const LessonsPanel = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <LessonMaterialsEditor
+        open={!!materialsLessonId}
+        onClose={() => setMaterialsLessonId(null)}
+        lessonId={materialsLessonId}
+        lessonTitle={items.find((l) => l.id === materialsLessonId)?.title}
+      />
     </Panel>
   );
 };

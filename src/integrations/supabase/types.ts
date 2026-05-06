@@ -208,6 +208,53 @@ export type Database = {
           },
         ]
       }
+      lesson_materials: {
+        Row: {
+          created_at: string
+          id: string
+          is_published: boolean
+          kind: string
+          lesson_id: string
+          order_index: number
+          storage_path: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          kind: string
+          lesson_id: string
+          order_index?: number
+          storage_path?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          kind?: string
+          lesson_id?: string
+          order_index?: number
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_materials_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_progress: {
         Row: {
           completed_at: string
@@ -243,6 +290,7 @@ export type Database = {
           created_at: string
           duration_min: number
           id: string
+          is_published: boolean
           order_index: number
           summary: string | null
           title: string
@@ -252,6 +300,7 @@ export type Database = {
           created_at?: string
           duration_min?: number
           id?: string
+          is_published?: boolean
           order_index?: number
           summary?: string | null
           title: string
@@ -261,6 +310,7 @@ export type Database = {
           created_at?: string
           duration_min?: number
           id?: string
+          is_published?: boolean
           order_index?: number
           summary?: string | null
           title?: string
