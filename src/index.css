@@ -114,12 +114,20 @@
     opacity: 0.06;
   }
 
-  /* Pattern background — same texture, no opacity. Safe to apply directly on a page <main>. */
-  .pattern-bg {
+  /* Pattern background — subtle texture via pseudo-element so content opacity isn't affected. Safe on page <main>. */
+  .pattern-bg { position: relative; }
+  .pattern-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
     background-image: url('/src/assets/pattern.png');
     background-size: 280px;
     background-repeat: repeat;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
   }
+  .pattern-bg > * { position: relative; z-index: 1; }
 
   .divider-ornament {
     position: relative;
