@@ -22,7 +22,7 @@ import SEO from "@/components/SEO";
 type Profile = { id: string; full_name: string | null; phone: string | null; created_at: string };
 type Enrollment = { id: string; user_id: string; course_id: string; plan: string; status: string; created_at: string };
 type Course = { id: string; title: string; slug: string; level: string | null; duration: string | null; price_monthly: number | null; description: string | null; plan: string | null };
-type Teacher = { id: string; full_name: string; email: string | null; whatsapp: string | null; country: string | null; specialization: string | null; bio: string | null; years_experience: number | null; topics: string[]; avatar_url: string | null };
+type Teacher = { id: string; full_name: string; email: string | null; whatsapp: string | null; country: string | null; specialization: string | null; bio: string | null; years_experience: number | null; topics: string[]; avatar_url: string | null; user_id?: string | null };
 type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number; is_published?: boolean };
 
 const Admin = () => {
