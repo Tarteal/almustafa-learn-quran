@@ -228,17 +228,27 @@ const StudentsPanel = () => {
 /* ---------------- Teachers ---------------- */
 const emptyTeacher: Partial<Teacher> = { full_name: "", email: "", whatsapp: "", country: "", specialization: "", bio: "", years_experience: 0, topics: [], avatar_url: "", user_id: "" };
 
+type RoleRow = { user_id: string; role: string };
+
 const TeachersPanel = () => {
   const [items, setItems] = useState<Teacher[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [roles, setRoles] = useState<RoleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Partial<Teacher> | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("teachers").select("*").order("full_name");
-    if (error) toast.error(error.message);
-    setItems((data as Teacher[]) || []);
+    const [tRes, pRes, rRes] = await Promise.all([
+      supabase.from("teachers").select("*").order("full_name"),
+      supabase.from("profiles").select("id, full_name, phone, created_at").order("full_name"),
+      supabase.from("user_roles").select("user_id, role"),
+    ]);
+    if (tRes.error) toast.error(tRes.error.message);
+    setItems((tRes.data as Teacher[]) || []);
+    setProfiles((pRes.data as Profile[]) || []);
+    setRoles((rRes.data as RoleRow[]) || []);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -265,10 +275,9 @@ const TeachersPanel = () => {
       ? await supabase.from("teachers").update(payload).eq("id", editing.id)
       : await supabase.from("teachers").insert(payload);
     if (res.error) return toast.error(res.error.message);
-    // If linked to a user, also grant 'teacher' role
+    // If linked to a user, also grant 'teacher' role (ignore unique conflict)
     if (editing.user_id) {
       await supabase.from("user_roles").insert({ user_id: editing.user_id, role: "teacher" as any });
-      // ignore unique conflict
     }
     toast.success(editing.id ? "Teacher updated" : "Teacher created");
     setDialogOpen(false); setEditing(null); load();
@@ -280,64 +289,208 @@ const TeachersPanel = () => {
     toast.success("Teacher deleted"); load();
   };
 
+  const grantTeacherRole = async (userId: string) => {
+    const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: "teacher" as any });
+    if (error && !error.message.toLowerCase().includes("duplicate")) return toast.error(error.message);
+    toast.success("Teacher role granted");
+    load();
+  };
+
   if (loading) return <Loader />;
 
-  return (
-    <Panel
-      title={`Teachers (${items.length})`}
-      action={<Button variant="emerald" onClick={openNew}><Plus className="h-4 w-4" /> New teacher</Button>}
-    >
-      <div className="grid sm:grid-cols-2 gap-4">
-        {items.map((t) => (
-          <div key={t.id} className="border border-border rounded-xl p-4 flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="font-medium truncate">{t.full_name}</p>
-              <p className="text-xs text-foreground/60 truncate">{t.specialization || "—"} · {t.country || "—"}</p>
-              <p className="text-xs text-foreground/60 truncate">{t.email || ""}</p>
-            </div>
-            <div className="flex gap-1 shrink-0">
-              <Button size="icon" variant="ghost" onClick={() => openEdit(t)}><Pencil className="h-4 w-4" /></Button>
-              <ConfirmDelete onConfirm={() => remove(t.id)} label={`Delete ${t.full_name}?`} />
-            </div>
-          </div>
-        ))}
-        {items.length === 0 && <p className="text-sm text-foreground/60 col-span-full text-center py-6">No teachers yet.</p>}
-      </div>
+  // Verification helpers
+  const profileById = (id?: string | null) => profiles.find((p) => p.id === id);
+  const hasTeacherRole = (uid?: string | null) => !!uid && roles.some((r) => r.user_id === uid && r.role === "teacher");
+  const orphanRoleUsers = roles
+    .filter((r) => r.role === "teacher" && !items.some((t) => t.user_id === r.user_id))
+    .map((r) => ({ user_id: r.user_id, profile: profileById(r.user_id) }));
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing?.id ? "Edit teacher" : "New teacher"}</DialogTitle></DialogHeader>
-          {editing && (
-            <div className="space-y-3">
-              <Field label="Full name *"><Input value={editing.full_name || ""} onChange={(e) => setEditing({ ...editing, full_name: e.target.value })} /></Field>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Email"><Input value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} /></Field>
-                <Field label="WhatsApp"><Input value={editing.whatsapp || ""} onChange={(e) => setEditing({ ...editing, whatsapp: e.target.value })} /></Field>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Country"><Input value={editing.country || ""} onChange={(e) => setEditing({ ...editing, country: e.target.value })} /></Field>
-                <Field label="Years exp."><Input type="number" value={editing.years_experience ?? ""} onChange={(e) => setEditing({ ...editing, years_experience: Number(e.target.value) })} /></Field>
-              </div>
-              <Field label="Specialization"><Input value={editing.specialization || ""} onChange={(e) => setEditing({ ...editing, specialization: e.target.value })} /></Field>
-              <Field label="Topics (comma separated)"><Input value={Array.isArray(editing.topics) ? editing.topics.join(", ") : (editing.topics as any) || ""} onChange={(e) => setEditing({ ...editing, topics: e.target.value as any })} /></Field>
-              <Field label="Avatar URL"><Input value={editing.avatar_url || ""} onChange={(e) => setEditing({ ...editing, avatar_url: e.target.value })} /></Field>
-              <Field label="Bio"><Textarea rows={3} value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} /></Field>
-              <Field label="Linked user ID (auth.users.id) — gives this teacher login access">
-                <Input
-                  placeholder="UUID from auth — paste user id"
-                  value={editing.user_id || ""}
-                  onChange={(e) => setEditing({ ...editing, user_id: e.target.value })}
+  return (
+    <div className="space-y-6">
+      {orphanRoleUsers.length > 0 && (
+        <Panel title={`⚠ Unlinked teacher accounts (${orphanRoleUsers.length})`}>
+          <p className="text-sm text-foreground/70 mb-4">
+            These users have the <code className="text-xs">teacher</code> role but aren't linked to a teacher profile. They will see "access permission required" until linked.
+          </p>
+          <div className="space-y-2">
+            {orphanRoleUsers.map((o) => (
+              <div key={o.user_id} className="border border-border rounded-xl p-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{o.profile?.full_name || "Unknown user"}</p>
+                  <p className="text-[11px] text-foreground/50 font-mono truncate">{o.user_id}</p>
+                </div>
+                <LinkOrphanButton
+                  userId={o.user_id}
+                  defaultName={o.profile?.full_name || ""}
+                  teachers={items}
+                  reload={load}
                 />
-              </Field>
-            </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      )}
+
+      <Panel
+        title={`Teachers (${items.length})`}
+        action={<Button variant="emerald" onClick={openNew}><Plus className="h-4 w-4" /> New teacher</Button>}
+      >
+        <div className="grid sm:grid-cols-2 gap-4">
+          {items.map((t) => {
+            const linked = !!t.user_id;
+            const profile = profileById(t.user_id);
+            const roleOk = hasTeacherRole(t.user_id);
+            const status = !linked
+              ? { label: "Not linked", cls: "bg-muted text-foreground" }
+              : !roleOk
+              ? { label: "Missing role", cls: "bg-destructive text-destructive-foreground" }
+              : { label: "Verified", cls: "bg-emerald text-white" };
+            return (
+              <div key={t.id} className="border border-border rounded-xl p-4 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="font-medium truncate">{t.full_name}</p>
+                    <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${status.cls}`}>{status.label}</span>
+                  </div>
+                  <p className="text-xs text-foreground/60 truncate">{t.specialization || "—"} · {t.country || "—"}</p>
+                  <p className="text-xs text-foreground/60 truncate">{t.email || profile?.full_name || ""}</p>
+                  {linked && (
+                    <p className="text-[11px] text-foreground/50 font-mono truncate mt-1">user: {t.user_id}</p>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1 shrink-0">
+                  <div className="flex gap-1">
+                    <Button size="icon" variant="ghost" onClick={() => openEdit(t)}><Pencil className="h-4 w-4" /></Button>
+                    <ConfirmDelete onConfirm={() => remove(t.id)} label={`Delete ${t.full_name}?`} />
+                  </div>
+                  {linked && !roleOk && (
+                    <Button size="sm" variant="emerald" onClick={() => grantTeacherRole(t.user_id!)}>
+                      Grant role
+                    </Button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          {items.length === 0 && <p className="text-sm text-foreground/60 col-span-full text-center py-6">No teachers yet.</p>}
+        </div>
+
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>{editing?.id ? "Edit teacher" : "New teacher"}</DialogTitle></DialogHeader>
+            {editing && (
+              <div className="space-y-3">
+                <Field label="Full name *"><Input value={editing.full_name || ""} onChange={(e) => setEditing({ ...editing, full_name: e.target.value })} /></Field>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Email"><Input value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} /></Field>
+                  <Field label="WhatsApp"><Input value={editing.whatsapp || ""} onChange={(e) => setEditing({ ...editing, whatsapp: e.target.value })} /></Field>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Country"><Input value={editing.country || ""} onChange={(e) => setEditing({ ...editing, country: e.target.value })} /></Field>
+                  <Field label="Years exp."><Input type="number" value={editing.years_experience ?? ""} onChange={(e) => setEditing({ ...editing, years_experience: Number(e.target.value) })} /></Field>
+                </div>
+                <Field label="Specialization"><Input value={editing.specialization || ""} onChange={(e) => setEditing({ ...editing, specialization: e.target.value })} /></Field>
+                <Field label="Topics (comma separated)"><Input value={Array.isArray(editing.topics) ? editing.topics.join(", ") : (editing.topics as any) || ""} onChange={(e) => setEditing({ ...editing, topics: e.target.value as any })} /></Field>
+                <Field label="Avatar URL"><Input value={editing.avatar_url || ""} onChange={(e) => setEditing({ ...editing, avatar_url: e.target.value })} /></Field>
+                <Field label="Bio"><Textarea rows={3} value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} /></Field>
+                <Field label="Linked user account — grants login access">
+                  <Select
+                    value={editing.user_id || "__none__"}
+                    onValueChange={(v) => setEditing({ ...editing, user_id: v === "__none__" ? "" : v })}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Choose a user" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">— Not linked —</SelectItem>
+                      {profiles.map((p) => {
+                        const taken = items.find((t) => t.user_id === p.id && t.id !== editing.id);
+                        return (
+                          <SelectItem key={p.id} value={p.id} disabled={!!taken}>
+                            {p.full_name || "(no name)"} {p.phone ? `· ${p.phone}` : ""} {taken ? `· linked to ${taken.full_name}` : ""}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </Field>
+                {editing.user_id && (
+                  <p className="text-[11px] text-foreground/60">
+                    Saving will also grant the <code className="text-xs">teacher</code> role to this user.
+                  </p>
+                )}
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button variant="emerald" onClick={save}>Save</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </Panel>
+    </div>
+  );
+};
+
+const LinkOrphanButton = ({
+  userId, defaultName, teachers, reload,
+}: { userId: string; defaultName: string; teachers: Teacher[]; reload: () => void }) => {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"existing" | "new">("existing");
+  const [teacherId, setTeacherId] = useState("");
+  const [newName, setNewName] = useState(defaultName);
+  const [saving, setSaving] = useState(false);
+
+  const submit = async () => {
+    setSaving(true);
+    if (mode === "existing") {
+      if (!teacherId) { setSaving(false); return toast.error("Pick a teacher"); }
+      const { error } = await supabase.from("teachers").update({ user_id: userId }).eq("id", teacherId);
+      if (error) { setSaving(false); return toast.error(error.message); }
+    } else {
+      if (!newName.trim()) { setSaving(false); return toast.error("Name required"); }
+      const { error } = await supabase.from("teachers").insert({ full_name: newName, user_id: userId });
+      if (error) { setSaving(false); return toast.error(error.message); }
+    }
+    setSaving(false); setOpen(false);
+    toast.success("Linked");
+    reload();
+  };
+
+  const unlinked = teachers.filter((t) => !t.user_id);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="emerald">Link</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>Link teacher profile</DialogTitle></DialogHeader>
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <Button size="sm" variant={mode === "existing" ? "emerald" : "outline"} onClick={() => setMode("existing")}>Existing teacher</Button>
+            <Button size="sm" variant={mode === "new" ? "emerald" : "outline"} onClick={() => setMode("new")}>Create new</Button>
+          </div>
+          {mode === "existing" ? (
+            <Field label="Choose unlinked teacher">
+              <Select value={teacherId} onValueChange={setTeacherId}>
+                <SelectTrigger><SelectValue placeholder="Pick one" /></SelectTrigger>
+                <SelectContent>
+                  {unlinked.length === 0 && <SelectItem value="__none__" disabled>No unlinked teachers</SelectItem>}
+                  {unlinked.map((t) => <SelectItem key={t.id} value={t.id}>{t.full_name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </Field>
+          ) : (
+            <Field label="Full name">
+              <Input value={newName} onChange={(e) => setNewName(e.target.value)} />
+            </Field>
           )}
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button variant="emerald" onClick={save}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </Panel>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="emerald" onClick={submit} disabled={saving}>{saving ? "Linking..." : "Link"}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
