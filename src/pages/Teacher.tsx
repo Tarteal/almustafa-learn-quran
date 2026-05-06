@@ -157,21 +157,48 @@ const Empty = ({ text }: { text: string }) => (
   <div className="bg-card border border-border rounded-xl p-6 text-center text-sm text-foreground/60">{text}</div>
 );
 
+const ATTENDANCE_META: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
+  unmarked: { label: "Not marked", cls: "bg-muted text-foreground", icon: <Clock className="h-3 w-3" /> },
+  present: { label: "Present", cls: "bg-emerald text-white", icon: <Check className="h-3 w-3" /> },
+  absent: { label: "Absent", cls: "bg-destructive text-destructive-foreground", icon: <X className="h-3 w-3" /> },
+  late: { label: "Late", cls: "bg-gold text-foreground", icon: <Clock className="h-3 w-3" /> },
+};
+
 const ClassCard = ({ c, label, reload }: { c: ClassRow; label: string; reload: () => void }) => {
   const [meetingUrl, setMeetingUrl] = useState(c.meeting_url || "");
   const [status, setStatus] = useState(c.status);
+  const [attendance, setAttendance] = useState(c.attendance || "unmarked");
+  const [note, setNote] = useState(c.attendance_note || "");
   const [saving, setSaving] = useState(false);
+  const [marking, setMarking] = useState<string | null>(null);
   const d = new Date(c.starts_at);
+  const meta = ATTENDANCE_META[attendance];
 
   const save = async () => {
     setSaving(true);
     const { error } = await supabase
       .from("classes")
-      .update({ meeting_url: meetingUrl || null, status })
+      .update({ meeting_url: meetingUrl || null, status, attendance_note: note || null })
       .eq("id", c.id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Class updated");
+    reload();
+  };
+
+  const mark = async (value: "present" | "absent" | "late" | "unmarked") => {
+    setMarking(value);
+    const { error } = await supabase
+      .from("classes")
+      .update({
+        attendance: value,
+        attendance_marked_at: value === "unmarked" ? null : new Date().toISOString(),
+      })
+      .eq("id", c.id);
+    setMarking(null);
+    if (error) return toast.error(error.message);
+    setAttendance(value);
+    toast.success(`Marked ${ATTENDANCE_META[value].label.toLowerCase()}`);
     reload();
   };
 
@@ -182,10 +209,48 @@ const ClassCard = ({ c, label, reload }: { c: ClassRow; label: string; reload: (
           <p className="font-medium truncate">{label}</p>
           <p className="text-xs text-foreground/60">{d.toLocaleString()} · {c.duration_min} min</p>
         </div>
-        <Badge variant={status === "completed" ? "default" : status === "cancelled" ? "destructive" : "secondary"} className="capitalize">
-          {status}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <span className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-1 rounded-full ${meta.cls}`}>
+            {meta.icon} {meta.label}
+          </span>
+          <Badge variant={status === "completed" ? "default" : status === "cancelled" ? "destructive" : "secondary"} className="capitalize">
+            {status}
+          </Badge>
+        </div>
       </div>
+
+      {/* Attendance row */}
+      <div className="border border-border rounded-xl p-3 mb-3 bg-background/40">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <Label className="text-xs uppercase tracking-wider text-foreground/60">Attendance</Label>
+          {c.attendance_marked_at && (
+            <span className="text-[10px] text-foreground/50">Marked {new Date(c.attendance_marked_at).toLocaleString()}</span>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant={attendance === "present" ? "emerald" : "outline"} disabled={!!marking} onClick={() => mark("present")}>
+            <Check className="h-4 w-4" /> Present
+          </Button>
+          <Button size="sm" variant={attendance === "absent" ? "destructive" : "outline"} disabled={!!marking} onClick={() => mark("absent")}>
+            <X className="h-4 w-4" /> Absent
+          </Button>
+          <Button size="sm" variant={attendance === "late" ? "gold" : "outline"} disabled={!!marking} onClick={() => mark("late")}>
+            <Clock className="h-4 w-4" /> Late
+          </Button>
+          {attendance !== "unmarked" && (
+            <Button size="sm" variant="ghost" disabled={!!marking} onClick={() => mark("unmarked")}>
+              Clear
+            </Button>
+          )}
+        </div>
+        <Input
+          className="mt-3"
+          placeholder="Optional note (e.g. arrived 10 min late)"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+        />
+      </div>
+
       <div className="grid sm:grid-cols-[1fr_auto_auto] gap-2 items-end">
         <div>
           <Label className="text-xs">Meeting URL</Label>
