@@ -11,6 +11,7 @@ import Auth from "./pages/Auth.tsx";
 import Enroll from "./pages/Enroll.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import TeacherProfile from "./pages/TeacherProfile.tsx";
+import Teacher from "./pages/Teacher.tsx";
 import Admin from "./pages/Admin.tsx";
 import Schedule from "./pages/Schedule.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/enroll" element={<Enroll />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/teacher" element={<Teacher />} />
               <Route path="/teacher/:teacherId" element={<TeacherProfile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/schedule" element={<Schedule />} />

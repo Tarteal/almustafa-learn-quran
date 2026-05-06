@@ -22,7 +22,7 @@ import SEO from "@/components/SEO";
 type Profile = { id: string; full_name: string | null; phone: string | null; created_at: string };
 type Enrollment = { id: string; user_id: string; course_id: string; plan: string; status: string; created_at: string };
 type Course = { id: string; title: string; slug: string; level: string | null; duration: string | null; price_monthly: number | null; description: string | null; plan: string | null };
-type Teacher = { id: string; full_name: string; email: string | null; whatsapp: string | null; country: string | null; specialization: string | null; bio: string | null; years_experience: number | null; topics: string[]; avatar_url: string | null };
+type Teacher = { id: string; full_name: string; email: string | null; whatsapp: string | null; country: string | null; specialization: string | null; bio: string | null; years_experience: number | null; topics: string[]; avatar_url: string | null; user_id?: string | null };
 type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number; is_published?: boolean };
 
 const Admin = () => {
@@ -226,7 +226,7 @@ const StudentsPanel = () => {
 };
 
 /* ---------------- Teachers ---------------- */
-const emptyTeacher: Partial<Teacher> = { full_name: "", email: "", whatsapp: "", country: "", specialization: "", bio: "", years_experience: 0, topics: [], avatar_url: "" };
+const emptyTeacher: Partial<Teacher> = { full_name: "", email: "", whatsapp: "", country: "", specialization: "", bio: "", years_experience: 0, topics: [], avatar_url: "", user_id: "" };
 
 const TeachersPanel = () => {
   const [items, setItems] = useState<Teacher[]>([]);
@@ -259,11 +259,17 @@ const TeachersPanel = () => {
       years_experience: editing.years_experience ? Number(editing.years_experience) : null,
       avatar_url: editing.avatar_url || null,
       topics: typeof editing.topics === "string" ? (editing.topics as any).split(",").map((s: string) => s.trim()).filter(Boolean) : (editing.topics || []),
+      user_id: editing.user_id ? editing.user_id : null,
     };
     const res = editing.id
       ? await supabase.from("teachers").update(payload).eq("id", editing.id)
       : await supabase.from("teachers").insert(payload);
     if (res.error) return toast.error(res.error.message);
+    // If linked to a user, also grant 'teacher' role
+    if (editing.user_id) {
+      await supabase.from("user_roles").insert({ user_id: editing.user_id, role: "teacher" as any });
+      // ignore unique conflict
+    }
     toast.success(editing.id ? "Teacher updated" : "Teacher created");
     setDialogOpen(false); setEditing(null); load();
   };
@@ -316,6 +322,13 @@ const TeachersPanel = () => {
               <Field label="Topics (comma separated)"><Input value={Array.isArray(editing.topics) ? editing.topics.join(", ") : (editing.topics as any) || ""} onChange={(e) => setEditing({ ...editing, topics: e.target.value as any })} /></Field>
               <Field label="Avatar URL"><Input value={editing.avatar_url || ""} onChange={(e) => setEditing({ ...editing, avatar_url: e.target.value })} /></Field>
               <Field label="Bio"><Textarea rows={3} value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} /></Field>
+              <Field label="Linked user ID (auth.users.id) — gives this teacher login access">
+                <Input
+                  placeholder="UUID from auth — paste user id"
+                  value={editing.user_id || ""}
+                  onChange={(e) => setEditing({ ...editing, user_id: e.target.value })}
+                />
+              </Field>
             </div>
           )}
           <DialogFooter>

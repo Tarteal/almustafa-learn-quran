@@ -5,11 +5,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/auth/AuthContext";
+import { useIsTeacher } from "@/hooks/useIsTeacher";
 import LangSwitcher from "./LangSwitcher";
 
 const Navbar = () => {
   const { t } = useI18n();
   const { user, signOut } = useAuth();
+  const { isTeacher } = useIsTeacher();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -83,7 +85,7 @@ const Navbar = () => {
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/dashboard"><LayoutDashboard className="h-4 w-4" /> Dashboard</Link>
+                <Link to={isTeacher ? "/teacher" : "/dashboard"}><LayoutDashboard className="h-4 w-4" /> {isTeacher ? "Teacher" : "Dashboard"}</Link>
               </Button>
               <Button variant="gold" size="sm" asChild>
                 <Link to="/enroll">Enroll</Link>
