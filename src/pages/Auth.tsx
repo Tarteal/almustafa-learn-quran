@@ -106,7 +106,7 @@ const Auth = () => {
 
         <div className="relative mb-4">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-foreground/60 font-medium">or</span></div>
+          <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-foreground font-medium">or</span></div>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -141,7 +141,7 @@ const Auth = () => {
             {mode === "signup" ? "Sign in" : "Create account"}
           </button>
         </p>
-        <p className="text-xs text-center text-foreground/60 mt-4">
+        <p className="text-xs text-center text-foreground mt-4">
           <Link to="/" className="hover:text-primary">← Back to home</Link>
         </p>
       </div>

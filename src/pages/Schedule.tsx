@@ -207,7 +207,7 @@ const Schedule = () => {
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-gold-deep mb-1">Schedule</p>
             <h1 className="font-display text-3xl">Your Classes</h1>
-            <p className="text-xs text-foreground/60 mt-1 flex items-center gap-1.5"><Clock className="h-3 w-3" /> Timezone: {tz}</p>
+            <p className="text-xs text-foreground mt-1 flex items-center gap-1.5"><Clock className="h-3 w-3" /> Timezone: {tz}</p>
           </div>
           <Button asChild variant="ghost"><Link to="/dashboard"><ArrowLeft className="h-4 w-4" /> Dashboard</Link></Button>
         </header>
@@ -241,8 +241,8 @@ const Schedule = () => {
               <table className="w-full text-sm min-w-[640px]">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
-                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-foreground/60 w-32">Day</th>
-                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-foreground/60">Classes</th>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-foreground w-32">Day</th>
+                    <th className="text-left px-4 py-3 text-xs uppercase tracking-wider text-foreground">Classes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -263,7 +263,7 @@ const Schedule = () => {
                                     {d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                   </span>
                                   <span className="font-medium text-foreground">{c.enrollment?.course?.title || "Class"}</span>
-                                  <span className="text-xs text-foreground/60 flex items-center gap-1"><GraduationCap className="h-3 w-3" /> {c.teacher?.full_name || "—"}</span>
+                                  <span className="text-xs text-foreground flex items-center gap-1"><GraduationCap className="h-3 w-3" /> {c.teacher?.full_name || "—"}</span>
                                   <StatusBadge state={state} />
                                 </div>
                               );

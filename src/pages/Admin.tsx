@@ -143,7 +143,7 @@ const StudentsPanel = () => {
         <div className="overflow-x-auto -mx-6 sm:-mx-8">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs uppercase tracking-wider text-foreground/60 border-b border-border">
+              <tr className="text-left text-xs uppercase tracking-wider text-foreground border-b border-border">
                 <th className="px-6 sm:px-8 py-3">Name</th>
                 <th className="py-3">Phone</th>
                 <th className="py-3">Joined</th>
@@ -168,7 +168,7 @@ const StudentsPanel = () => {
                   </tr>
                 );
               })}
-              {profiles.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-foreground/60">No students yet.</td></tr>}
+              {profiles.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-foreground">No students yet.</td></tr>}
             </tbody>
           </table>
         </div>
@@ -184,7 +184,7 @@ const StudentsPanel = () => {
         <div className="overflow-x-auto -mx-6 sm:-mx-8">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs uppercase tracking-wider text-foreground/60 border-b border-border">
+              <tr className="text-left text-xs uppercase tracking-wider text-foreground border-b border-border">
                 <th className="px-6 sm:px-8 py-3">Course</th>
                 <th className="py-3">Plan</th>
                 <th className="py-3">Status</th>
@@ -214,7 +214,7 @@ const StudentsPanel = () => {
                   </td>
                 </tr>
               ))}
-              {enrollments.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-foreground/60">No enrollments.</td></tr>}
+              {enrollments.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-foreground">No enrollments.</td></tr>}
             </tbody>
           </table>
         </div>
@@ -284,8 +284,8 @@ const TeachersPanel = () => {
           <div key={t.id} className="border border-border rounded-xl p-4 flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="font-medium truncate">{t.full_name}</p>
-              <p className="text-xs text-foreground/60 truncate">{t.specialization || "—"} · {t.country || "—"}</p>
-              <p className="text-xs text-foreground/60 truncate">{t.email || ""}</p>
+              <p className="text-xs text-foreground truncate">{t.specialization || "—"} · {t.country || "—"}</p>
+              <p className="text-xs text-foreground truncate">{t.email || ""}</p>
             </div>
             <div className="flex gap-1 shrink-0">
               <Button size="icon" variant="ghost" onClick={() => openEdit(t)}><Pencil className="h-4 w-4" /></Button>
@@ -293,7 +293,7 @@ const TeachersPanel = () => {
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-sm text-foreground/60 col-span-full text-center py-6">No teachers yet.</p>}
+        {items.length === 0 && <p className="text-sm text-foreground col-span-full text-center py-6">No teachers yet.</p>}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -377,8 +377,8 @@ const CoursesPanel = () => {
         {items.map((c) => (
           <div key={c.id} className="border border-border rounded-xl p-4 flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="font-medium">{c.title} <span className="text-xs text-foreground/60 font-mono">/{c.slug}</span></p>
-              <p className="text-xs text-foreground/60">{c.level || "—"} · {c.duration || "—"} · {c.price_monthly ? `$${c.price_monthly}/mo` : "no price"}</p>
+              <p className="font-medium">{c.title} <span className="text-xs text-foreground font-mono">/{c.slug}</span></p>
+              <p className="text-xs text-foreground">{c.level || "—"} · {c.duration || "—"} · {c.price_monthly ? `$${c.price_monthly}/mo` : "no price"}</p>
             </div>
             <div className="flex gap-1 shrink-0">
               <Button size="icon" variant="ghost" onClick={() => { setEditing({ ...c }); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
@@ -386,7 +386,7 @@ const CoursesPanel = () => {
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-sm text-foreground/60 text-center py-6">No courses yet.</p>}
+        {items.length === 0 && <p className="text-sm text-foreground text-center py-6">No courses yet.</p>}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -490,10 +490,10 @@ const LessonsPanel = () => {
       <div className="space-y-2">
         {filtered.map((l) => (
           <div key={l.id} className="border border-border rounded-xl p-3 flex items-center gap-3">
-            <span className="font-mono text-xs text-foreground/60 w-8 text-center">{l.order_index}</span>
+            <span className="font-mono text-xs text-foreground w-8 text-center">{l.order_index}</span>
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">{l.title}</p>
-              <p className="text-xs text-foreground/60 truncate">{courseTitle(l.course_id)} · {l.duration_min} min</p>
+              <p className="text-xs text-foreground truncate">{courseTitle(l.course_id)} · {l.duration_min} min</p>
             </div>
             <div className="flex gap-1 shrink-0">
               <Button size="icon" variant="ghost" onClick={() => { setEditing({ ...l }); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
@@ -501,7 +501,7 @@ const LessonsPanel = () => {
             </div>
           </div>
         ))}
-        {filtered.length === 0 && <p className="text-sm text-foreground/60 text-center py-6">No lessons.</p>}
+        {filtered.length === 0 && <p className="text-sm text-foreground text-center py-6">No lessons.</p>}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -639,7 +639,7 @@ const ClassesPanel = () => {
             <div key={c.id} className="border border-border rounded-xl p-3 flex flex-wrap items-center gap-3">
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{enrLabel(c.enrollment_id)}</p>
-                <p className="text-xs text-foreground/60 truncate">
+                <p className="text-xs text-foreground truncate">
                   {teacherName(c.teacher_id)} · {d.toLocaleString()} · {c.duration_min} min · <span className="capitalize">{c.status}</span>
                   {c.meeting_url ? <span className="text-emerald"> · Zoom ✓</span> : <span className="text-foreground/40"> · No link</span>}
                 </p>
@@ -653,7 +653,7 @@ const ClassesPanel = () => {
             </div>
           );
         })}
-        {items.length === 0 && <p className="text-sm text-foreground/60 text-center py-6">No classes scheduled.</p>}
+        {items.length === 0 && <p className="text-sm text-foreground text-center py-6">No classes scheduled.</p>}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -829,14 +829,14 @@ const StudentDetailsDrawer = ({
                 <CreditCard className="h-4 w-4 text-gold-deep" /> Subscription & Payment
               </h3>
               {enrollments.length === 0 ? (
-                <p className="text-sm text-foreground/60">No active subscriptions.</p>
+                <p className="text-sm text-foreground">No active subscriptions.</p>
               ) : (
                 <div className="space-y-2">
                   {enrollments.map((e) => (
                     <div key={e.id} className="border border-border rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-medium text-sm truncate">{e.course?.title || "Course"}</p>
-                        <p className="text-xs text-foreground/60">
+                        <p className="text-xs text-foreground">
                           Plan: <span className="font-mono">{e.plan}</span>
                           {e.course?.price_monthly ? ` · $${e.course.price_monthly}/mo` : ""}
                         </p>
@@ -854,13 +854,13 @@ const StudentDetailsDrawer = ({
                 <BookOpen className="h-4 w-4 text-gold-deep" /> Enrolled Courses ({enrollments.length})
               </h3>
               {enrollments.length === 0 ? (
-                <p className="text-sm text-foreground/60">No enrollments.</p>
+                <p className="text-sm text-foreground">No enrollments.</p>
               ) : (
                 <ul className="space-y-2">
                   {enrollments.map((e) => (
                     <li key={e.id} className="text-sm border-l-2 border-gold-deep/40 pl-3">
                       <p className="font-medium">{e.course?.title || e.course_id.slice(0, 8)}</p>
-                      <p className="text-xs text-foreground/60">
+                      <p className="text-xs text-foreground">
                         {e.course?.level || "—"} · {e.course?.duration || "—"} · enrolled {new Date(e.created_at).toLocaleDateString()}
                       </p>
                     </li>
@@ -881,7 +881,7 @@ const StudentDetailsDrawer = ({
                 <Stat label="Cancelled" value={cancelled} />
               </div>
               {classes.length === 0 ? (
-                <p className="text-sm text-foreground/60">No classes scheduled.</p>
+                <p className="text-sm text-foreground">No classes scheduled.</p>
               ) : (
                 <ul className="space-y-1.5 max-h-56 overflow-y-auto">
                   {classes.slice(0, 10).map((c) => (
@@ -900,13 +900,13 @@ const StudentDetailsDrawer = ({
                 <ClipboardList className="h-4 w-4 text-gold-deep" /> Assignments & Lesson Progress
               </h3>
               {progress.length === 0 ? (
-                <p className="text-sm text-foreground/60">No completed lessons yet.</p>
+                <p className="text-sm text-foreground">No completed lessons yet.</p>
               ) : (
                 <ul className="space-y-1.5 max-h-56 overflow-y-auto">
                   {progress.map((p) => (
                     <li key={p.id} className="flex items-center justify-between text-sm border-b border-border/60 py-1.5">
                       <span className="text-foreground/80 truncate pr-2">{p.lesson?.title || p.lesson_id.slice(0, 8)}</span>
-                      <span className="text-xs text-foreground/60 shrink-0">{new Date(p.completed_at).toLocaleDateString()}</span>
+                      <span className="text-xs text-foreground shrink-0">{new Date(p.completed_at).toLocaleDateString()}</span>
                     </li>
                   ))}
                 </ul>
@@ -922,7 +922,7 @@ const StudentDetailsDrawer = ({
 const Stat = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="border border-border rounded-lg p-2 text-center">
     <p className="text-lg font-semibold">{value}</p>
-    <p className="text-[10px] uppercase tracking-wider text-foreground/60">{label}</p>
+    <p className="text-[10px] uppercase tracking-wider text-foreground">{label}</p>
   </div>
 );
 
