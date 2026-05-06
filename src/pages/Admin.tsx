@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video, Paperclip } from "lucide-react";
+import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video, Paperclip, UserCheck } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import LessonMaterialsEditor from "@/components/admin/LessonMaterialsEditor";
 import { toast } from "sonner";
@@ -66,9 +66,10 @@ const Admin = () => {
         </header>
 
         <Tabs defaultValue="students" className="w-full">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full mb-8 h-auto">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-6 w-full mb-8 h-auto">
             <TabsTrigger value="students" className="gap-2 py-2.5"><Users className="h-4 w-4" /> Students</TabsTrigger>
             <TabsTrigger value="teachers" className="gap-2 py-2.5"><GraduationCap className="h-4 w-4" /> Teachers</TabsTrigger>
+            <TabsTrigger value="assignments" className="gap-2 py-2.5"><UserCheck className="h-4 w-4" /> Assign</TabsTrigger>
             <TabsTrigger value="courses" className="gap-2 py-2.5"><BookOpen className="h-4 w-4" /> Courses</TabsTrigger>
             <TabsTrigger value="lessons" className="gap-2 py-2.5"><ListChecks className="h-4 w-4" /> Lessons</TabsTrigger>
             <TabsTrigger value="classes" className="gap-2 py-2.5"><Video className="h-4 w-4" /> Classes</TabsTrigger>
@@ -76,6 +77,7 @@ const Admin = () => {
 
           <TabsContent value="students"><StudentsPanel /></TabsContent>
           <TabsContent value="teachers"><TeachersPanel /></TabsContent>
+          <TabsContent value="assignments"><AssignmentsPanel /></TabsContent>
           <TabsContent value="courses"><CoursesPanel /></TabsContent>
           <TabsContent value="lessons"><LessonsPanel /></TabsContent>
           <TabsContent value="classes"><ClassesPanel /></TabsContent>
@@ -491,6 +493,151 @@ const LinkOrphanButton = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+};
+
+/* ---------------- Assignments (Teacher ↔ Student enrollment) ---------------- */
+type AssignmentRow = { enrollment_id: string; teacher_id: string; assigned_at: string };
+
+const AssignmentsPanel = () => {
+  const [enrollments, setEnrollments] = useState<(Enrollment & { course?: Course; profile?: Profile })[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "assigned" | "unassigned">("all");
+  const [search, setSearch] = useState("");
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const [eRes, tRes, cRes, pRes, aRes] = await Promise.all([
+      supabase.from("enrollments").select("id, user_id, course_id, plan, status, created_at").order("created_at", { ascending: false }),
+      supabase.from("teachers").select("*").order("full_name"),
+      supabase.from("courses").select("id, title, slug, level, duration, price_monthly, description, plan"),
+      supabase.from("profiles").select("id, full_name, phone, created_at"),
+      supabase.from("enrollment_teachers").select("enrollment_id, teacher_id, assigned_at"),
+    ]);
+    if (eRes.error) toast.error(eRes.error.message);
+    const courses = (cRes.data as Course[]) || [];
+    const profiles = (pRes.data as Profile[]) || [];
+    setEnrollments(((eRes.data as Enrollment[]) || []).map((e) => ({
+      ...e,
+      course: courses.find((c) => c.id === e.course_id),
+      profile: profiles.find((p) => p.id === e.user_id),
+    })));
+    setTeachers((tRes.data as Teacher[]) || []);
+    setAssignments((aRes.data as AssignmentRow[]) || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const teacherOf = (enrId: string) => assignments.find((a) => a.enrollment_id === enrId);
+
+  const assign = async (enrollmentId: string, teacherId: string) => {
+    setSavingId(enrollmentId);
+    // upsert (enrollment_id is primary key — one teacher per enrollment)
+    const { error } = await supabase
+      .from("enrollment_teachers")
+      .upsert({ enrollment_id: enrollmentId, teacher_id: teacherId }, { onConflict: "enrollment_id" });
+    setSavingId(null);
+    if (error) return toast.error(error.message);
+    toast.success("Teacher assigned");
+    load();
+  };
+
+  const unassign = async (enrollmentId: string) => {
+    setSavingId(enrollmentId);
+    const { error } = await supabase.from("enrollment_teachers").delete().eq("enrollment_id", enrollmentId);
+    setSavingId(null);
+    if (error) return toast.error(error.message);
+    toast.success("Teacher unassigned");
+    load();
+  };
+
+  if (loading) return <Loader />;
+
+  const q = search.trim().toLowerCase();
+  const rows = enrollments.filter((e) => {
+    const a = teacherOf(e.id);
+    if (filter === "assigned" && !a) return false;
+    if (filter === "unassigned" && a) return false;
+    if (!q) return true;
+    return (
+      (e.profile?.full_name || "").toLowerCase().includes(q) ||
+      (e.course?.title || "").toLowerCase().includes(q)
+    );
+  });
+
+  const unassignedCount = enrollments.filter((e) => !teacherOf(e.id)).length;
+
+  return (
+    <Panel
+      title={`Assign teachers (${enrollments.length} enrollments · ${unassignedCount} unassigned)`}
+      action={
+        <div className="flex flex-wrap gap-2 items-center">
+          <Input
+            placeholder="Search student or course"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-9 w-56"
+          />
+          <Select value={filter} onValueChange={(v) => setFilter(v as any)}>
+            <SelectTrigger className="h-9 w-40"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+              <SelectItem value="assigned">Assigned</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      }
+    >
+      <p className="text-sm text-foreground/70 mb-4">
+        Each enrollment can have one assigned teacher. Picking a teacher will replace any previous assignment for that enrollment.
+      </p>
+      <div className="space-y-2">
+        {rows.map((e) => {
+          const a = teacherOf(e.id);
+          const currentTeacher = a ? teachers.find((t) => t.id === a.teacher_id) : null;
+          return (
+            <div key={e.id} className="border border-border rounded-xl p-3 flex flex-wrap items-center gap-3">
+              <div className="flex-1 min-w-[200px]">
+                <p className="font-medium text-sm truncate">
+                  {e.profile?.full_name || "Student"} <span className="text-foreground/50">·</span>{" "}
+                  <span className="text-foreground/70">{e.course?.title || "Course"}</span>
+                </p>
+                <p className="text-[11px] text-foreground/60">
+                  Plan {e.plan} · <span className="capitalize">{e.status}</span>
+                  {currentTeacher && <> · Currently: <span className="text-emerald font-medium">{currentTeacher.full_name}</span></>}
+                  {!currentTeacher && <> · <span className="text-destructive font-medium">No teacher</span></>}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Select
+                  value={a?.teacher_id || ""}
+                  onValueChange={(v) => assign(e.id, v)}
+                  disabled={savingId === e.id}
+                >
+                  <SelectTrigger className="h-9 w-56"><SelectValue placeholder="Assign teacher…" /></SelectTrigger>
+                  <SelectContent>
+                    {teachers.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>{t.full_name}</SelectItem>
+                    ))}
+                    {teachers.length === 0 && <SelectItem value="__none__" disabled>No teachers available</SelectItem>}
+                  </SelectContent>
+                </Select>
+                {a && (
+                  <Button size="sm" variant="ghost" onClick={() => unassign(e.id)} disabled={savingId === e.id}>
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {rows.length === 0 && <p className="text-sm text-foreground/60 text-center py-6">No matching enrollments.</p>}
+      </div>
+    </Panel>
   );
 };
 
