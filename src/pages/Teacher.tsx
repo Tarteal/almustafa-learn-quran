@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 import SEO from "@/components/SEO";
 
 type ClassRow = {
@@ -114,6 +115,15 @@ const TeacherPage = () => {
           <StatCard icon={<Video className="h-5 w-5" />} label="Total classes" value={classes.length} />
         </div>
 
+        {teacherId && (
+          <ScheduleClass
+            teacherId={teacherId}
+            enrollments={enrollments}
+            enrLabel={enrLabel}
+            reload={load}
+          />
+        )}
+
         {loading ? (
           <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
         ) : (
@@ -156,6 +166,93 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 const Empty = ({ text }: { text: string }) => (
   <div className="bg-card border border-border rounded-xl p-6 text-center text-sm text-foreground/60">{text}</div>
 );
+
+const ScheduleClass = ({
+  teacherId, enrollments, enrLabel, reload,
+}: {
+  teacherId: string;
+  enrollments: Enr[];
+  enrLabel: (eid: string) => string;
+  reload: () => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [enrollmentId, setEnrollmentId] = useState("");
+  const defaultDate = (() => {
+    const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    d.setMinutes(0, 0, 0);
+    return d.toISOString().slice(0, 16);
+  })();
+  const [startsAt, setStartsAt] = useState(defaultDate);
+  const [duration, setDuration] = useState(30);
+  const [meetingUrl, setMeetingUrl] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async () => {
+    if (!enrollmentId) return toast.error("Choose a student");
+    if (!startsAt) return toast.error("Pick a date and time");
+    setSaving(true);
+    const { error } = await supabase.from("classes").insert({
+      enrollment_id: enrollmentId,
+      teacher_id: teacherId,
+      starts_at: new Date(startsAt).toISOString(),
+      duration_min: duration,
+      meeting_url: meetingUrl || null,
+      status: "scheduled",
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Class scheduled");
+    setOpen(false);
+    setEnrollmentId("");
+    setMeetingUrl("");
+    reload();
+  };
+
+  if (enrollments.length === 0) return null;
+
+  return (
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-display text-xl">Schedule a class</h2>
+        <Button variant={open ? "ghost" : "emerald"} onClick={() => setOpen((o) => !o)}>
+          {open ? <><X className="h-4 w-4" /> Cancel</> : <><Plus className="h-4 w-4" /> New class</>}
+        </Button>
+      </div>
+      {open && (
+        <div className="bg-card border-2 border-border rounded-2xl p-5 shadow-elegant grid sm:grid-cols-2 gap-3">
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Student / enrollment</Label>
+            <Select value={enrollmentId} onValueChange={setEnrollmentId}>
+              <SelectTrigger className="mt-1.5"><SelectValue placeholder="Choose one" /></SelectTrigger>
+              <SelectContent>
+                {enrollments.map((e) => (
+                  <SelectItem key={e.id} value={e.id}>{enrLabel(e.id)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Date &amp; time</Label>
+            <Input type="datetime-local" className="mt-1.5" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+          </div>
+          <div>
+            <Label className="text-xs">Duration (min)</Label>
+            <Input type="number" min={5} step={5} className="mt-1.5" value={duration} onChange={(e) => setDuration(parseInt(e.target.value || "30", 10))} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Meeting URL (optional)</Label>
+            <Input className="mt-1.5" placeholder="https://zoom.us/j/..." value={meetingUrl} onChange={(e) => setMeetingUrl(e.target.value)} />
+          </div>
+          <div className="sm:col-span-2 flex justify-end">
+            <Button variant="emerald" onClick={submit} disabled={saving}>
+              <Save className="h-4 w-4" /> {saving ? "Scheduling..." : "Schedule class"}
+            </Button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
 
 const ATTENDANCE_META: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
   unmarked: { label: "Not marked", cls: "bg-muted text-foreground", icon: <Clock className="h-3 w-3" /> },
