@@ -7,6 +7,7 @@ import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/auth/AuthContext";
 import { useIsTeacher } from "@/hooks/useIsTeacher";
 import LangSwitcher from "./LangSwitcher";
+import logo from "@/assets/logo.png";
 
 const Navbar = () => {
   const { t } = useI18n();
@@ -57,13 +58,10 @@ const Navbar = () => {
     >
       <div className="container flex h-20 items-center justify-between">
         <a href="#home" className="flex items-center gap-3 group">
-          <div className="relative h-11 w-11 rounded-full gradient-emerald grid place-items-center shadow-elegant">
-            <span className="font-arabic text-gold text-xl">ﷲ</span>
-            <div className="absolute inset-0 rounded-full ring-1 ring-gold/40" />
-          </div>
+          <img src={logo} alt="Almustafa Caravan logo" className="h-12 w-12 object-contain" />
           <div className="leading-tight">
             <div className={`font-display text-lg font-semibold ${brandText}`}>Almustafa</div>
-            <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Quran Academy</div>
+            <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Caravan</div>
           </div>
         </a>
 
