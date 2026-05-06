@@ -58,7 +58,13 @@ const Navbar = () => {
     >
       <div className="container flex h-20 items-center justify-between">
         <a href="#home" className="flex items-center gap-3 group">
-          <img src={logo} alt="Almustafa Caravan logo" className="h-12 w-12 object-contain" />
+          <img
+            src={logo}
+            alt="Almustafa Caravan logo"
+            width={1024}
+            height={1024}
+            className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 max-h-[80%] object-contain shrink-0"
+          />
           <div className="leading-tight">
             <div className={`font-display text-lg font-semibold ${brandText}`}>Almustafa</div>
             <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Caravan</div>
