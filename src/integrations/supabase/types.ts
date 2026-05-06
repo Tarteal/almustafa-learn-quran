@@ -58,6 +58,9 @@ export type Database = {
       }
       classes: {
         Row: {
+          attendance: string
+          attendance_marked_at: string | null
+          attendance_note: string | null
           created_at: string
           duration_min: number
           enrollment_id: string
@@ -68,6 +71,9 @@ export type Database = {
           teacher_id: string
         }
         Insert: {
+          attendance?: string
+          attendance_marked_at?: string | null
+          attendance_note?: string | null
           created_at?: string
           duration_min?: number
           enrollment_id: string
@@ -78,6 +84,9 @@ export type Database = {
           teacher_id: string
         }
         Update: {
+          attendance?: string
+          attendance_marked_at?: string | null
+          attendance_note?: string | null
           created_at?: string
           duration_min?: number
           enrollment_id?: string
