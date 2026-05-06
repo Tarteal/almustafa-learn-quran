@@ -22,14 +22,12 @@ export const useIsAdmin = () => {
       }
       setLoading(true);
 
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", currentUser.id)
-        .eq("role", "admin")
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: currentUser.id,
+        _role: "admin",
+      });
 
-      const admin = !error && !!data;
+      const admin = !error && data === true;
 
       if (!active) return;
       setIsAdmin(admin);
