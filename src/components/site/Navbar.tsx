@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/auth/AuthContext";
