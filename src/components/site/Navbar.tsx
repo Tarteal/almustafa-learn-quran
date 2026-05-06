@@ -93,7 +93,7 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <LangSwitcher onLight={!isHome} />
+          <LangSwitcher onLight={onLight} />
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
@@ -119,7 +119,7 @@ const Navbar = () => {
         </div>
 
         <div className="lg:hidden flex items-center gap-2">
-          <LangSwitcher onLight={!isHome} />
+          <LangSwitcher onLight={onLight} />
           <button
             className={`p-2 rounded-md ${iconText}`}
             onClick={() => setOpen(!open)}
