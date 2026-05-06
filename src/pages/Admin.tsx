@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video, Paperclip } from "lucide-react";
+import { Loader2, Users, GraduationCap, BookOpen, ListChecks, Plus, Pencil, Trash2, ShieldCheck, ArrowLeft, Eye, CalendarCheck, CreditCard, ClipboardList, Video, Paperclip, UserCheck } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import LessonMaterialsEditor from "@/components/admin/LessonMaterialsEditor";
 import { toast } from "sonner";
