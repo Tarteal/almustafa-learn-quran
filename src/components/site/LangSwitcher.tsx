@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LANGS, useI18n } from "@/i18n/I18nContext";
 
-const LangSwitcher = ({ light = false }: { light?: boolean }) => {
+const LangSwitcher = ({ light = false, onLight = true }: { light?: boolean; onLight?: boolean }) => {
   const { lang, setLang } = useI18n();
   const current = LANGS.find((l) => l.code === lang)!;
 
@@ -17,7 +17,9 @@ const LangSwitcher = ({ light = false }: { light?: boolean }) => {
         className={`inline-flex items-center gap-2 rounded-md px-3 h-9 text-sm font-medium transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           light
             ? "text-background/90 hover:bg-white/10 border border-white/20"
-            : "text-white/80 hover:bg-white/10 border border-white/20"
+            : onLight
+              ? "text-foreground/80 hover:bg-foreground/5 border border-border"
+              : "text-white/80 hover:bg-white/10 border border-white/20"
         }`}
         aria-label="Change language"
       >

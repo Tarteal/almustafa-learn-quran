@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/auth/AuthContext";
@@ -11,8 +11,17 @@ const Navbar = () => {
   const { t } = useI18n();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  // On non-home pages, the page background is light, so white text is unreadable.
+  // Use foreground color for inner pages, and white for the home hero overlay.
+  const brandText = isHome ? "text-white" : "text-foreground";
+  const linkText = isHome ? "text-white/80" : "text-foreground/80";
+  const mobileLinkText = isHome ? "text-white/90" : "text-foreground/90";
+  const iconText = isHome ? "text-white" : "text-foreground";
 
   const handleSignOut = async () => {
     await signOut();
@@ -51,7 +60,7 @@ const Navbar = () => {
             <div className="absolute inset-0 rounded-full ring-1 ring-gold/40" />
           </div>
           <div className="leading-tight">
-            <div className="font-display text-lg font-semibold text-white">Almustafa</div>
+            <div className={`font-display text-lg font-semibold ${brandText}`}>Almustafa</div>
             <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Quran Academy</div>
           </div>
         </a>
@@ -61,7 +70,7 @@ const Navbar = () => {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-white/80 hover:text-gold transition-smooth relative group"
+              className={`text-sm font-medium ${linkText} hover:text-gold transition-smooth relative group`}
             >
               {l.label}
               <span className="absolute -bottom-1 left-0 right-0 h-px bg-gold scale-x-0 group-hover:scale-x-100 transition-smooth origin-left" />
@@ -70,7 +79,7 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <LangSwitcher />
+          <LangSwitcher onLight={!isHome} />
           {user ? (
             <>
               <Button variant="ghost" size="sm" asChild>
@@ -96,9 +105,9 @@ const Navbar = () => {
         </div>
 
         <div className="lg:hidden flex items-center gap-2">
-          <LangSwitcher />
+          <LangSwitcher onLight={!isHome} />
           <button
-            className="p-2 rounded-md text-white"
+            className={`p-2 rounded-md ${iconText}`}
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -115,7 +124,7 @@ const Navbar = () => {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="text-base font-medium py-2 text-white/90"
+                className={`text-base font-medium py-2 ${mobileLinkText}`}
               >
                 {l.label}
               </a>
