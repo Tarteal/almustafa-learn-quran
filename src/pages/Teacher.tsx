@@ -129,6 +129,8 @@ const TeacherPage = () => {
           <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
         ) : (
           <>
+            <CalendarView classes={classes} enrLabel={enrLabel} />
+
             <Section title={`Upcoming (${upcoming.length})`}>
               {upcoming.length === 0 ? <Empty text="No upcoming classes." /> : upcoming.map((c) => (
                 <ClassCard key={c.id} c={c} label={enrLabel(c.enrollment_id)} reload={load} />
