@@ -452,6 +452,7 @@ const LessonsPanel = () => {
       order_index: Number(editing.order_index || 0),
       duration_min: Number(editing.duration_min || 30),
       course_id: editing.course_id,
+      is_published: !!editing.is_published,
     };
     const res = editing.id
       ? await supabase.from("lessons").update(payload).eq("id", editing.id)
