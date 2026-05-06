@@ -15,6 +15,9 @@ import SEO from "@/components/SEO";
 type ClassRow = {
   id: string; enrollment_id: string; teacher_id: string;
   starts_at: string; duration_min: number; meeting_url: string | null; status: string;
+  attendance: "unmarked" | "present" | "absent" | "late";
+  attendance_note: string | null;
+  attendance_marked_at: string | null;
 };
 type Enr = { id: string; user_id: string; course_id: string; status: string };
 type Course = { id: string; title: string };
