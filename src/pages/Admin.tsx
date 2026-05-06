@@ -496,10 +496,20 @@ const LessonsPanel = () => {
           <div key={l.id} className="border border-border rounded-xl p-3 flex items-center gap-3">
             <span className="font-mono text-xs text-foreground/60 w-8 text-center">{l.order_index}</span>
             <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">{l.title}</p>
+              <p className="font-medium truncate flex items-center gap-2">
+                {l.title}
+                {l.is_published ? (
+                  <Badge variant="default" className="text-[10px]">Published</Badge>
+                ) : (
+                  <Badge variant="secondary" className="text-[10px]">Draft</Badge>
+                )}
+              </p>
               <p className="text-xs text-foreground/60 truncate">{courseTitle(l.course_id)} · {l.duration_min} min</p>
             </div>
             <div className="flex gap-1 shrink-0">
+              <Button size="sm" variant="outline" onClick={() => setMaterialsLessonId(l.id)}>
+                <Paperclip className="h-4 w-4" /> Materials
+              </Button>
               <Button size="icon" variant="ghost" onClick={() => { setEditing({ ...l }); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
               <ConfirmDelete onConfirm={() => remove(l.id)} label={`Delete "${l.title}"?`} />
             </div>
