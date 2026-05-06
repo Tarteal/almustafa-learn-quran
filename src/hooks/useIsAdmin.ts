@@ -11,7 +11,10 @@ export const useIsAdmin = () => {
     let active = true;
 
     const check = async () => {
-      if (!user) {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData.session?.user ?? user;
+
+      if (!currentUser) {
         if (!active) return;
         setIsAdmin(false);
         setLoading(false);
@@ -19,25 +22,14 @@ export const useIsAdmin = () => {
       }
       setLoading(true);
 
-      // Primary: security-definer RPC (bypasses RLS edge cases)
-      const rpc = await supabase.rpc("has_role", {
-        _user_id: user.id,
-        _role: "admin" as any,
-      });
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", currentUser.id)
+        .eq("role", "admin")
+        .maybeSingle();
 
-      let admin = false;
-      if (!rpc.error && rpc.data === true) {
-        admin = true;
-      } else {
-        // Fallback: direct table read
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-        admin = !!data;
-      }
+      const admin = !error && !!data;
 
       if (!active) return;
       setIsAdmin(admin);
