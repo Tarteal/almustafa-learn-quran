@@ -29,7 +29,7 @@ const Dashboard = () => {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [classes, setClasses] = useState<ClassRow[]>([]);
-  const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string | null; approval_status?: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const locale = localeFor(lang);
@@ -41,7 +41,7 @@ const Dashboard = () => {
   const load = async () => {
     if (!user) return;
     const [pRes, eRes, prRes] = await Promise.all([
-      supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select("full_name, approval_status").eq("id", user.id).maybeSingle(),
       supabase
         .from("enrollments")
         .select("id, plan, status, created_at, course_id, courses(id, title, slug, duration, level)")
@@ -128,6 +128,24 @@ const Dashboard = () => {
 
   if (authLoading || loading) {
     return <div className="min-h-screen grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
+  }
+
+  if (profile && profile.approval_status && profile.approval_status !== "approved") {
+    const rejected = profile.approval_status === "rejected";
+    return (
+      <main className="min-h-screen grid place-items-center px-4 bg-background">
+        <div className="max-w-md w-full bg-card border-2 border-border ring-1 ring-foreground/5 rounded-2xl p-8 text-center shadow-elegant">
+          <Sparkles className="h-10 w-10 mx-auto text-gold-deep mb-3" />
+          <h1 className="font-display text-2xl mb-2">{rejected ? "Account not approved" : "Awaiting approval"}</h1>
+          <p className="text-sm text-foreground/70 mb-6">
+            {rejected
+              ? "An administrator has not approved your account. Please contact support if you believe this is a mistake."
+              : "Thanks for signing up! An administrator will review your account and assign your role shortly."}
+          </p>
+          <Button variant="ghost" onClick={onSignOut}><LogOut className="h-4 w-4" /> Sign out</Button>
+        </div>
+      </main>
+    );
   }
 
   return (
