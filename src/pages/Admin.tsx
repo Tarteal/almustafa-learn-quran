@@ -100,6 +100,143 @@ const Panel = ({ title, action, children }: { title: string; action?: React.Reac
   </div>
 );
 
+/* ---------------- Approvals ---------------- */
+type AppRole = "admin" | "moderator" | "user" | "teacher";
+type PendingProfile = Profile & { approval_status: string };
+
+const ApprovalsPanel = () => {
+  const [profiles, setProfiles] = useState<PendingProfile[]>([]);
+  const [roles, setRoles] = useState<{ user_id: string; role: AppRole }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"pending" | "approved" | "rejected" | "all">("pending");
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const [pRes, rRes] = await Promise.all([
+      supabase.from("profiles").select("id, full_name, phone, created_at, approval_status").order("created_at", { ascending: false }),
+      supabase.from("user_roles").select("user_id, role"),
+    ]);
+    if (pRes.error) toast.error(pRes.error.message);
+    setProfiles((pRes.data as PendingProfile[]) || []);
+    setRoles((rRes.data as any) || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const approve = async (p: PendingProfile, role: AppRole) => {
+    setBusy(p.id);
+    try {
+      const hasRole = roles.some((r) => r.user_id === p.id && r.role === role);
+      if (!hasRole) {
+        const { error: rErr } = await supabase.from("user_roles").insert({ user_id: p.id, role });
+        if (rErr && !rErr.message.includes("duplicate")) throw rErr;
+      }
+      if (role === "teacher") {
+        const { data: t } = await supabase.from("teachers").select("id").eq("user_id", p.id).maybeSingle();
+        if (!t) {
+          const { error: tErr } = await supabase.from("teachers").insert({ user_id: p.id, full_name: p.full_name || "New teacher" });
+          if (tErr) throw tErr;
+        }
+      }
+      const { error } = await supabase
+        .from("profiles")
+        .update({ approval_status: "approved", approved_at: new Date().toISOString() } as any)
+        .eq("id", p.id);
+      if (error) throw error;
+      toast.success(`Approved as ${role}`);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message || "Failed to approve");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const setStatus = async (p: PendingProfile, approval_status: string) => {
+    setBusy(p.id);
+    const { error } = await supabase.from("profiles").update({ approval_status } as any).eq("id", p.id);
+    setBusy(null);
+    if (error) return toast.error(error.message);
+    toast.success("Updated");
+    load();
+  };
+
+  if (loading) return <Loader />;
+
+  const filtered = profiles.filter((p) => filter === "all" || (p.approval_status || "pending") === filter);
+  const pendingCount = profiles.filter((p) => (p.approval_status || "pending") === "pending").length;
+
+  return (
+    <Panel
+      title={`Sign-up approvals${pendingCount ? ` (${pendingCount} pending)` : ""}`}
+      action={
+        <Select value={filter} onValueChange={(v: any) => setFilter(v)}>
+          <SelectTrigger className="h-9 w-40"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+          </SelectContent>
+        </Select>
+      }
+    >
+      <div className="space-y-3">
+        {filtered.map((p) => {
+          const userRoles = roles.filter((r) => r.user_id === p.id).map((r) => r.role);
+          const status = p.approval_status || "pending";
+          return (
+            <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border border-border bg-background/40">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-medium">{p.full_name || <span className="text-foreground/50">Unnamed user</span>}</p>
+                  <Badge variant={status === "approved" ? "default" : status === "rejected" ? "destructive" : "secondary"} className="capitalize">{status}</Badge>
+                  {userRoles.map((r) => (
+                    <Badge key={r} variant="outline" className="capitalize">{r}</Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-foreground/60 mt-1">
+                  {p.phone || "no phone"} · joined {new Date(p.created_at).toLocaleDateString()}
+                </p>
+                <p className="text-[10px] font-mono text-foreground/40 mt-0.5">{p.id}</p>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {status !== "approved" && (
+                  <>
+                    <Select onValueChange={(v: AppRole) => approve(p, v)} disabled={busy === p.id}>
+                      <SelectTrigger className="h-9 w-44"><SelectValue placeholder="Approve as…" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="user">Student</SelectItem>
+                        <SelectItem value="teacher">Teacher</SelectItem>
+                        <SelectItem value="moderator">Moderator</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {status === "pending" && (
+                      <Button size="sm" variant="outline" onClick={() => setStatus(p, "rejected")} disabled={busy === p.id}>
+                        <X className="h-4 w-4" /> Reject
+                      </Button>
+                    )}
+                  </>
+                )}
+                {status !== "pending" && (
+                  <Button size="sm" variant="ghost" onClick={() => setStatus(p, "pending")} disabled={busy === p.id}>
+                    Reset
+                  </Button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="text-center py-10 text-foreground/60">No {filter === "all" ? "" : filter} sign-ups.</div>
+        )}
+      </div>
+    </Panel>
+  );
+};
+
 /* ---------------- Students ---------------- */
 const StudentsPanel = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
