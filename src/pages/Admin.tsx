@@ -65,8 +65,9 @@ const Admin = () => {
           <Button asChild variant="ghost"><Link to="/dashboard"><ArrowLeft className="h-4 w-4" /> Dashboard</Link></Button>
         </header>
 
-        <Tabs defaultValue="students" className="w-full">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-6 w-full mb-8 h-auto">
+        <Tabs defaultValue="approvals" className="w-full">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-7 w-full mb-8 h-auto">
+            <TabsTrigger value="approvals" className="gap-2 py-2.5"><UserPlus className="h-4 w-4" /> Approvals</TabsTrigger>
             <TabsTrigger value="students" className="gap-2 py-2.5"><Users className="h-4 w-4" /> Students</TabsTrigger>
             <TabsTrigger value="teachers" className="gap-2 py-2.5"><GraduationCap className="h-4 w-4" /> Teachers</TabsTrigger>
             <TabsTrigger value="assignments" className="gap-2 py-2.5"><UserCheck className="h-4 w-4" /> Assign</TabsTrigger>
@@ -75,6 +76,7 @@ const Admin = () => {
             <TabsTrigger value="classes" className="gap-2 py-2.5"><Video className="h-4 w-4" /> Classes</TabsTrigger>
           </TabsList>
 
+          <TabsContent value="approvals"><ApprovalsPanel /></TabsContent>
           <TabsContent value="students"><StudentsPanel /></TabsContent>
           <TabsContent value="teachers"><TeachersPanel /></TabsContent>
           <TabsContent value="assignments"><AssignmentsPanel /></TabsContent>
