@@ -41,7 +41,7 @@ const Dashboard = () => {
   const load = async () => {
     if (!user) return;
     const [pRes, eRes, prRes] = await Promise.all([
-      supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select("full_name, approval_status").eq("id", user.id).maybeSingle(),
       supabase
         .from("enrollments")
         .select("id, plan, status, created_at, course_id, courses(id, title, slug, duration, level)")
