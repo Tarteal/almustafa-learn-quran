@@ -485,6 +485,14 @@ export type Database = {
         Returns: boolean
       }
       is_teacher_of: { Args: { _teacher_id: string }; Returns: boolean }
+      teacher_has_enrollment: {
+        Args: { _enrollment_id: string }
+        Returns: boolean
+      }
+      user_owns_enrollment: {
+        Args: { _enrollment_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "teacher"
