@@ -29,7 +29,7 @@ const Dashboard = () => {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [classes, setClasses] = useState<ClassRow[]>([]);
-  const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string | null; approval_status?: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const locale = localeFor(lang);
