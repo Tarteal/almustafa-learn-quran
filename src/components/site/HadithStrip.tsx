@@ -3,10 +3,7 @@ import { Moon, BookOpen } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
 const hadiths = [
-  { text: "The best of you are those who learn the Quran and teach it.", source: "Sahih al-Bukhari" },
-  { text: "Whoever recites a letter from the Book of Allah, he will receive a hasanah.", source: "At-Tirmidhi" },
-  { text: "The example of a believer who recites the Quran is like a citron — its taste is good and its smell is good.", source: "Sahih al-Bukhari" },
-  { text: "Read the Quran, for it will come as an intercessor for its companions on the Day of Resurrection.", source: "Sahih Muslim" },
+  { text: "Read in the name of your Lord who created.", source: "Surah Al-Alaq 96:1" },
 ];
 
 const HadithStrip = () => {
