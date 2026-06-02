@@ -41,10 +41,12 @@ const About = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep/40 via-transparent to-transparent" />
             </div>
-            <div className="absolute -bottom-6 -right-4 md:-right-10 bg-card border border-gold/30 rounded-2xl px-6 py-5 shadow-elegant max-w-[220px]">
-              <div className="font-arabic text-2xl text-primary mb-1">إقرأ</div>
+            <div className="absolute -bottom-6 -right-4 md:-right-10 bg-card border border-gold/30 rounded-2xl px-6 py-5 shadow-elegant max-w-[260px]">
+              <div className="font-arabic text-2xl text-primary mb-1 leading-relaxed" dir="rtl">
+                اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ
+              </div>
               <div className="text-xs text-muted-foreground">
-                "Read in the name of your Lord who created."
+                "Read in the name of your Lord who created." — Surah Al-Alaq 96:1
               </div>
             </div>
             <div className="absolute -top-6 -left-6 w-24 h-24 border-l-2 border-t-2 border-gold/60 rounded-tl-2xl" />
