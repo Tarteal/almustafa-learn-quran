@@ -1,5 +1,5 @@
 import SectionHeading from "./SectionHeading";
-import quranImg from "@/assets/quran-about.jpg";
+import quranImg from "@/assets/quran-actual.png.asset.json";
 import { Award, Clock, Globe2, Heart } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
