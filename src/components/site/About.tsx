@@ -1,5 +1,5 @@
 import SectionHeading from "./SectionHeading";
-import quranImg from "@/assets/quran-about.jpg";
+import quranImg from "@/assets/quran-actual.png.asset.json";
 import { Award, Clock, Globe2, Heart } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
@@ -32,7 +32,7 @@ const About = () => {
           <div className="relative">
             <div className="relative arch-top overflow-hidden shadow-deep border-4 border-gold/30">
               <img
-                src={quranImg}
+                src={quranImg.url}
                 alt="Open Quran on a wooden rehal"
                 className="w-full aspect-[4/5] object-cover"
                 loading="lazy"
