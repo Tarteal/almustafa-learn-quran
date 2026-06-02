@@ -3,7 +3,11 @@ import { Moon, BookOpen } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
 const hadiths = [
-  { text: "Read in the name of your Lord who created.", source: "Surah Al-Alaq 96:1" },
+  {
+    arabic: "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ",
+    text: "Read in the name of your Lord who created.",
+    source: "Surah Al-Alaq 96:1",
+  },
 ];
 
 const HadithStrip = () => {
