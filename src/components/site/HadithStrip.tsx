@@ -46,6 +46,9 @@ const HadithStrip = () => {
           </div>
           <div>
             <div className="text-xs uppercase tracking-[0.3em] text-gold-light mb-1.5">{t("hadith.eyebrow")}</div>
+            <p className="font-arabic text-2xl md:text-3xl text-gold-light leading-loose mb-2" dir="rtl">
+              {h.arabic}
+            </p>
             <p className="text-background/95 italic font-display text-lg md:text-xl leading-snug">
               "{h.text}"
             </p>
