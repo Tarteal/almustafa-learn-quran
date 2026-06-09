@@ -82,7 +82,7 @@ const Navbar = () => {
             <a
               key={l.href}
               href={l.href}
-              className={`text-sm font-medium ${linkText} hover:text-gold transition-smooth relative group`}
+              className="text-sm font-medium hover:text-gold transition-smooth relative group bg-slate-800 text-slate-800"
             >
               {l.label}
               <span className="absolute -bottom-1 left-0 right-0 h-px bg-gold scale-x-0 group-hover:scale-x-100 transition-smooth origin-left" />
