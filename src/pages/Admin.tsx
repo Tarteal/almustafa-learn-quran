@@ -18,6 +18,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import SEO from "@/components/SEO";
+import { isSafeHttpUrl } from "@/lib/url-safety";
 
 type Profile = { id: string; full_name: string | null; phone: string | null; created_at: string; approval_status?: string };
 type Enrollment = { id: string; user_id: string; course_id: string; plan: string; status: string; created_at: string };
