@@ -25,7 +25,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-10 pb-12 border-b border-background/10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <img src={logo.url} alt="Path to Quran logo" className="h-16 w-auto object-contain" />
+              <img src={logo.url} alt="Path to Quran logo" width={512} height={256} loading="lazy" className="h-16 w-auto object-contain" />
             </div>
             <p className="text-background/60 text-sm leading-relaxed max-w-md mb-5">
               {t("footer.tagline")}

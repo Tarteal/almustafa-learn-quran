@@ -69,6 +69,10 @@ const Navbar = () => {
           <img
             src={logo.url}
             alt="Path to Quran logo"
+            width={512}
+            height={256}
+            loading="eager"
+            fetchPriority="high"
             className="h-12 sm:h-14 lg:h-16 w-auto object-contain shrink-0"
           />
         </a>
