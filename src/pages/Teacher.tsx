@@ -258,6 +258,7 @@ const ScheduleClass = ({
   const submit = async () => {
     if (!enrollmentId) return toast.error("Choose a student");
     if (!startsAt) return toast.error("Pick a date and time");
+    if (meetingUrl && !isSafeHttpUrl(meetingUrl)) return toast.error("Meeting URL must start with https:// or http://");
     setSaving(true);
     const { error } = await supabase.from("classes").insert({
       enrollment_id: enrollmentId,
