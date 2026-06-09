@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame, Mail, MessageCircle, Video, Calendar, GraduationCap, MapPin } from "lucide-react";
+import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame, Video, Calendar, GraduationCap, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import { safeHref } from "@/lib/url-safety";
@@ -15,7 +15,7 @@ import RequestSlotDialog from "@/components/dashboard/RequestSlotDialog";
 type Course = { id: string; title: string; slug: string; duration: string | null; level: string | null };
 type Enrollment = { id: string; plan: string; status: string; created_at: string; course_id: string; courses: Course | null };
 type Lesson = { id: string; course_id: string; title: string; summary: string | null; order_index: number; duration_min: number };
-type Teacher = { id: string; full_name: string; bio: string | null; country: string | null; specialization: string | null; email: string | null; whatsapp: string | null; avatar_url: string | null };
+type Teacher = { id: string; full_name: string; bio: string | null; country: string | null; specialization: string | null; avatar_url: string | null };
 type Assignment = { enrollment_id: string; teacher_id: string; teachers: Teacher | null };
 type ClassRow = { id: string; enrollment_id: string; teacher_id: string; starts_at: string; duration_min: number; meeting_url: string | null; status: string };
 
@@ -65,7 +65,7 @@ const Dashboard = () => {
           .order("order_index"),
         supabase
           .from("enrollment_teachers")
-          .select("enrollment_id, teacher_id, teachers(id, full_name, bio, country, specialization, email, whatsapp, avatar_url)")
+          .select("enrollment_id, teacher_id, teachers(id, full_name, bio, country, specialization, avatar_url)")
           .in("enrollment_id", enrollmentIds),
         supabase
           .from("classes")
@@ -219,18 +219,6 @@ const Dashboard = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {teacher.email && (
-                            <Button variant="ghost" size="sm" asChild>
-                              <a href={`mailto:${teacher.email}`}><Mail className="h-4 w-4" /> {t("dash.contact.email")}</a>
-                            </Button>
-                          )}
-                          {teacher.whatsapp && (
-                            <Button variant="ghost" size="sm" asChild>
-                              <a href={`https://wa.me/${teacher.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer">
-                                <MessageCircle className="h-4 w-4" /> {t("dash.contact.whatsapp")}
-                              </a>
-                            </Button>
-                          )}
                           <Button variant="emerald" size="sm" asChild>
                             <Link to={`/teacher/${teacher.id}`}>
                               <GraduationCap className="h-4 w-4" /> {t("teacher.view")}
