@@ -8,7 +8,7 @@ import { useAuth } from "@/auth/AuthContext";
 import { useIsTeacher } from "@/hooks/useIsTeacher";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import LangSwitcher from "./LangSwitcher";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/path-to-quran-logo.png.asset.json";
 
 const Navbar = () => {
   const { t } = useI18n();
@@ -67,11 +67,9 @@ const Navbar = () => {
       <div className="container flex h-20 items-center justify-between">
         <a href="#home" className="flex items-center gap-3 group">
           <img
-            src={logo}
-            alt="Almustafa Caravan logo"
-            width={1024}
-            height={1024}
-            className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 max-h-[80%] object-contain shrink-0"
+            src={logo.url}
+            alt="Path to Quran logo"
+            className="h-12 sm:h-14 lg:h-16 w-auto max-h-[80%] object-contain shrink-0"
           />
           <div className="leading-tight">
             <div className={`font-display text-lg font-semibold ${brandText}`}>Almustafa</div>
