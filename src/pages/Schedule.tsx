@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Video, Calendar, Clock, ArrowLeft, BookOpen, GraduationCap, Bell, LinkIcon, CheckCircle2, Hourglass } from "lucide-react";
 import SEO from "@/components/SEO";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { safeHref } from "@/lib/url-safety";
 
 const formatStartsIn = (startsAt: string) => {
   const ms = new Date(startsAt).getTime() - Date.now();
