@@ -4,13 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/auth/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, Mail, MessageCircle, MapPin, GraduationCap, Award, BookOpen, Clock, Video } from "lucide-react";
+import { Loader2, ArrowLeft, MapPin, GraduationCap, Award, BookOpen, Clock, Video } from "lucide-react";
 import SEO from "@/components/SEO";
 import { safeHref } from "@/lib/url-safety";
 
 type Teacher = {
   id: string; full_name: string; bio: string | null; country: string | null;
-  specialization: string | null; email: string | null; whatsapp: string | null;
+  specialization: string | null;
   avatar_url: string | null; topics: string[]; years_experience: number | null;
 };
 type Availability = { id: string; day_of_week: number; start_time: string; end_time: string; timezone: string };
@@ -134,20 +134,6 @@ const TeacherProfile = () => {
                     <span className="flex items-center gap-1.5"><Award className="h-4 w-4 text-gold-deep" /> {teacher.years_experience}+ {t("teacher.years")}</span>
                   )}
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {teacher.email && (
-                  <Button variant="emerald" size="sm" asChild>
-                    <a href={`mailto:${teacher.email}`}><Mail className="h-4 w-4" /> {t("dash.contact.email")}</a>
-                  </Button>
-                )}
-                {teacher.whatsapp && (
-                  <Button variant="gold" size="sm" asChild>
-                    <a href={`https://wa.me/${teacher.whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noreferrer">
-                      <MessageCircle className="h-4 w-4" /> {t("dash.contact.whatsapp")}
-                    </a>
-                  </Button>
-                )}
               </div>
             </div>
           </div>
