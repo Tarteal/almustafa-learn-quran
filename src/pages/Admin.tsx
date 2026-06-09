@@ -383,13 +383,22 @@ const TeachersPanel = () => {
 
   const load = async () => {
     setLoading(true);
-    const [tRes, pRes, rRes] = await Promise.all([
+    const [tRes, cRes, pRes, rRes] = await Promise.all([
       supabase.from("teachers").select("*").order("full_name"),
+      supabase.from("teacher_contacts").select("teacher_id, email, whatsapp"),
       supabase.from("profiles").select("id, full_name, phone, created_at").order("full_name"),
       supabase.from("user_roles").select("user_id, role"),
     ]);
     if (tRes.error) toast.error(tRes.error.message);
-    setItems((tRes.data as Teacher[]) || []);
+    const contacts = ((cRes.data as TeacherContact[]) || []).reduce<Record<string, TeacherContact>>((acc, c) => {
+      acc[c.teacher_id] = c;
+      return acc;
+    }, {});
+    setItems(((tRes.data as Teacher[]) || []).map((t) => ({
+      ...t,
+      email: contacts[t.id]?.email ?? null,
+      whatsapp: contacts[t.id]?.whatsapp ?? null,
+    })));
     setProfiles((pRes.data as Profile[]) || []);
     setRoles((rRes.data as RoleRow[]) || []);
     setLoading(false);
@@ -404,8 +413,6 @@ const TeachersPanel = () => {
     if (!editing.full_name?.trim()) return toast.error("Full name required");
     const payload: any = {
       full_name: editing.full_name,
-      email: editing.email || null,
-      whatsapp: editing.whatsapp || null,
       country: editing.country || null,
       specialization: editing.specialization || null,
       bio: editing.bio || null,
@@ -415,9 +422,18 @@ const TeachersPanel = () => {
       user_id: editing.user_id ? editing.user_id : null,
     };
     const res = editing.id
-      ? await supabase.from("teachers").update(payload).eq("id", editing.id)
-      : await supabase.from("teachers").insert(payload);
+      ? await supabase.from("teachers").update(payload).eq("id", editing.id).select("id").single()
+      : await supabase.from("teachers").insert(payload).select("id").single();
     if (res.error) return toast.error(res.error.message);
+    const teacherId = editing.id || res.data?.id;
+    if (teacherId) {
+      const { error: contactError } = await supabase.from("teacher_contacts").upsert({
+        teacher_id: teacherId,
+        email: editing.email || null,
+        whatsapp: editing.whatsapp || null,
+      });
+      if (contactError) return toast.error(contactError.message);
+    }
     // If linked to a user, also grant 'teacher' role (ignore unique conflict)
     if (editing.user_id) {
       await supabase.from("user_roles").insert({ user_id: editing.user_id, role: "teacher" as any });
