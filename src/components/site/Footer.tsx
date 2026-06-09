@@ -28,8 +28,8 @@ const Footer = () => {
                 <span className="font-arabic text-gold-light text-xl">ﷲ</span>
               </div>
               <div>
-                <div className="font-display text-xl">Almustafa</div>
-                <div className="text-[10px] tracking-[0.2em] uppercase text-gold-light">Quran Academy</div>
+                <div className="font-display text-xl tracking-wide">ALMUSTAFA CARAVAN</div>
+                <div className="text-[10px] tracking-[0.2em] uppercase text-gold-light">HAJJ UMRAH &amp; ZYARAH</div>
               </div>
             </div>
             <p className="text-background/60 text-sm leading-relaxed max-w-md mb-5">
