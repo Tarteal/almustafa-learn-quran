@@ -29,10 +29,10 @@ const Navbar = () => {
   // On non-home pages, the page background is light, so white text is unreadable.
   // Use foreground color for inner pages, and white for the home hero overlay.
   const onLight = !isHome || scrolled;
-  const brandText = onLight ? "text-foreground" : "text-white";
-  const linkText = onLight ? "text-foreground/80" : "text-white/80";
-  const mobileLinkText = onLight ? "text-foreground/90" : "text-white/90";
-  const iconText = onLight ? "text-foreground" : "text-white";
+  const brandText = "text-slate-100";
+  const linkText = "text-slate-100/80";
+  const mobileLinkText = "text-slate-100/90";
+  const iconText = "text-slate-100";
 
   const handleSignOut = async () => {
     await signOut();
