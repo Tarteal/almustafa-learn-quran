@@ -266,9 +266,9 @@ const Dashboard = () => {
                                         defaultStartsAt={c.starts_at}
                                         defaultDurationMin={c.duration_min}
                                       />
-                                      {c.meeting_url && (
+                                      {safeHref(c.meeting_url) && (
                                         <Button size="sm" variant="gold" asChild>
-                                          <a href={c.meeting_url} target="_blank" rel="noreferrer">
+                                          <a href={safeHref(c.meeting_url)} target="_blank" rel="noreferrer">
                                             <Video className="h-4 w-4" /> {t("dash.join")}
                                           </a>
                                         </Button>
