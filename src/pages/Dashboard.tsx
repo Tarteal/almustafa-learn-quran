@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Loader2, BookOpen, LogOut, Plus, Check, PlayCircle, Sparkles, Trophy, Flame, Mail, MessageCircle, Video, Calendar, GraduationCap, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
+import { safeHref } from "@/lib/url-safety";
 import { useI18n } from "@/i18n/I18nContext";
 import LangSwitcher from "@/components/site/LangSwitcher";
 import RequestSlotDialog from "@/components/dashboard/RequestSlotDialog";
