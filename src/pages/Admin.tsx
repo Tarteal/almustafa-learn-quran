@@ -1073,6 +1073,9 @@ const ClassesPanel = () => {
     if (!editing.enrollment_id || !editing.teacher_id || !editing.starts_at) {
       return toast.error("Enrollment, teacher and start time required");
     }
+    if (editing.meeting_url && !isSafeHttpUrl(editing.meeting_url)) {
+      return toast.error("Meeting URL must start with https:// or http://");
+    }
     const payload: any = {
       enrollment_id: editing.enrollment_id,
       teacher_id: editing.teacher_id,
