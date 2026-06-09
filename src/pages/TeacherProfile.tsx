@@ -6,6 +6,7 @@ import { useI18n } from "@/i18n/I18nContext";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, Mail, MessageCircle, MapPin, GraduationCap, Award, BookOpen, Clock, Video } from "lucide-react";
 import SEO from "@/components/SEO";
+import { safeHref } from "@/lib/url-safety";
 
 type Teacher = {
   id: string; full_name: string; bio: string | null; country: string | null;
