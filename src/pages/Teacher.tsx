@@ -438,8 +438,8 @@ const ClassCard = ({ c, label, reload }: { c: ClassRow; label: string; reload: (
           <Save className="h-4 w-4" /> Save
         </Button>
       </div>
-      {c.meeting_url && (
-        <a href={c.meeting_url} target="_blank" rel="noreferrer" className="text-xs text-emerald hover:underline inline-flex items-center gap-1 mt-3">
+      {safeHref(c.meeting_url) && (
+        <a href={safeHref(c.meeting_url)} target="_blank" rel="noreferrer" className="text-xs text-emerald hover:underline inline-flex items-center gap-1 mt-3">
           Open meeting <ExternalLink className="h-3 w-3" />
         </a>
       )}
