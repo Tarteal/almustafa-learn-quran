@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Video, Calendar, Clock, ArrowLeft, BookOpen, GraduationCap, Bell, LinkIcon, CheckCircle2, Hourglass } from "lucide-react";
 import SEO from "@/components/SEO";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { safeHref } from "@/lib/url-safety";
 
 const formatStartsIn = (startsAt: string) => {
   const ms = new Date(startsAt).getTime() - Date.now();
@@ -31,7 +32,8 @@ type JoinButtonProps = {
 
 const JoinButton = ({ state, meetingUrl, startsAt, className, size = "default", fullWidth }: JoinButtonProps) => {
   const isLive = state === "live";
-  const hasLink = !!meetingUrl;
+  const safeUrl = safeHref(meetingUrl);
+  const hasLink = !!safeUrl;
 
   let label = "Join Meeting";
   let helper = "";
@@ -68,7 +70,7 @@ const JoinButton = ({ state, meetingUrl, startsAt, className, size = "default", 
       aria-label={label}
     >
       {!disabled ? (
-        <a href={meetingUrl!} target="_blank" rel="noreferrer">
+        <a href={safeUrl!} target="_blank" rel="noreferrer">
           <Icon className="h-4 w-4" /> Join Meeting
         </a>
       ) : (

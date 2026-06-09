@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import SEO from "@/components/SEO";
+import { isSafeHttpUrl, safeHref } from "@/lib/url-safety";
 
 type ClassRow = {
   id: string; enrollment_id: string; teacher_id: string;
@@ -257,6 +258,7 @@ const ScheduleClass = ({
   const submit = async () => {
     if (!enrollmentId) return toast.error("Choose a student");
     if (!startsAt) return toast.error("Pick a date and time");
+    if (meetingUrl && !isSafeHttpUrl(meetingUrl)) return toast.error("Meeting URL must start with https:// or http://");
     setSaving(true);
     const { error } = await supabase.from("classes").insert({
       enrollment_id: enrollmentId,
@@ -339,6 +341,7 @@ const ClassCard = ({ c, label, reload }: { c: ClassRow; label: string; reload: (
   const meta = ATTENDANCE_META[attendance];
 
   const save = async () => {
+    if (meetingUrl && !isSafeHttpUrl(meetingUrl)) return toast.error("Meeting URL must start with https:// or http://");
     setSaving(true);
     const { error } = await supabase
       .from("classes")
@@ -435,8 +438,8 @@ const ClassCard = ({ c, label, reload }: { c: ClassRow; label: string; reload: (
           <Save className="h-4 w-4" /> Save
         </Button>
       </div>
-      {c.meeting_url && (
-        <a href={c.meeting_url} target="_blank" rel="noreferrer" className="text-xs text-emerald hover:underline inline-flex items-center gap-1 mt-3">
+      {safeHref(c.meeting_url) && (
+        <a href={safeHref(c.meeting_url)} target="_blank" rel="noreferrer" className="text-xs text-emerald hover:underline inline-flex items-center gap-1 mt-3">
           Open meeting <ExternalLink className="h-3 w-3" />
         </a>
       )}

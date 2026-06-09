@@ -6,6 +6,7 @@ import { useI18n } from "@/i18n/I18nContext";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, Mail, MessageCircle, MapPin, GraduationCap, Award, BookOpen, Clock, Video } from "lucide-react";
 import SEO from "@/components/SEO";
+import { safeHref } from "@/lib/url-safety";
 
 type Teacher = {
   id: string; full_name: string; bio: string | null; country: string | null;
@@ -234,9 +235,9 @@ const TeacherProfile = () => {
                         {d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })} · {c.duration_min} {t("dash.minutes")}
                       </p>
                     </div>
-                    {c.meeting_url && (
+                    {safeHref(c.meeting_url) && (
                       <Button size="sm" variant="gold" asChild>
-                        <a href={c.meeting_url} target="_blank" rel="noreferrer">
+                        <a href={safeHref(c.meeting_url)} target="_blank" rel="noreferrer">
                           <Video className="h-4 w-4" /> {t("dash.join")}
                         </a>
                       </Button>

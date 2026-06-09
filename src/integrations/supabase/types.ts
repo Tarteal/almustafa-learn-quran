@@ -484,6 +484,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_approved: { Args: { _user_id: string }; Returns: boolean }
       is_teacher_of: { Args: { _teacher_id: string }; Returns: boolean }
       teacher_has_enrollment: {
         Args: { _enrollment_id: string }
