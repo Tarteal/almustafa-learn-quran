@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import SEO from "@/components/SEO";
+import { isSafeHttpUrl, safeHref } from "@/lib/url-safety";
 
 type ClassRow = {
   id: string; enrollment_id: string; teacher_id: string;
