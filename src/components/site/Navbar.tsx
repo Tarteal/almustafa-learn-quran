@@ -69,12 +69,8 @@ const Navbar = () => {
           <img
             src={logo.url}
             alt="Path to Quran logo"
-            className="h-12 sm:h-14 lg:h-16 w-auto max-h-[80%] object-contain shrink-0"
+            className="h-12 sm:h-14 lg:h-16 w-auto object-contain shrink-0"
           />
-          <div className="leading-tight">
-            <div className={`font-display text-lg font-semibold ${brandText}`}>Almustafa</div>
-            <div className="text-[10px] tracking-[0.2em] uppercase text-gold-deep font-medium">Caravan</div>
-          </div>
         </a>
 
         <nav className="hidden lg:flex items-center gap-8">

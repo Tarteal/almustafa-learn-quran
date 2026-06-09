@@ -25,11 +25,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-10 pb-12 border-b border-background/10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <img src={logo.url} alt="Path to Quran logo" className="h-14 w-auto object-contain bg-background/90 rounded-md p-1" />
-              <div>
-                <div className="font-display text-xl tracking-wide">ALMUSTAFA CARAVAN</div>
-                <div className="text-[10px] tracking-[0.2em] uppercase text-gold-light">HAJJ UMRAH &amp; ZYARAH</div>
-              </div>
+              <img src={logo.url} alt="Path to Quran logo" className="h-16 w-auto object-contain" />
             </div>
             <p className="text-background/60 text-sm leading-relaxed max-w-md mb-5">
               {t("footer.tagline")}
