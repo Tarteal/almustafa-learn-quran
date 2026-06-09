@@ -32,7 +32,8 @@ type JoinButtonProps = {
 
 const JoinButton = ({ state, meetingUrl, startsAt, className, size = "default", fullWidth }: JoinButtonProps) => {
   const isLive = state === "live";
-  const hasLink = !!meetingUrl;
+  const safeUrl = safeHref(meetingUrl);
+  const hasLink = !!safeUrl;
 
   let label = "Join Meeting";
   let helper = "";
