@@ -70,7 +70,7 @@ const JoinButton = ({ state, meetingUrl, startsAt, className, size = "default", 
       aria-label={label}
     >
       {!disabled ? (
-        <a href={meetingUrl!} target="_blank" rel="noreferrer">
+        <a href={safeUrl!} target="_blank" rel="noreferrer">
           <Icon className="h-4 w-4" /> Join Meeting
         </a>
       ) : (
