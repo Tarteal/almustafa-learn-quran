@@ -29,10 +29,10 @@ const Navbar = () => {
   // On non-home pages, the page background is light, so white text is unreadable.
   // Use foreground color for inner pages, and white for the home hero overlay.
   const onLight = !isHome || scrolled;
-  const brandText = "text-slate-100";
-  const linkText = "text-slate-100/80";
-  const mobileLinkText = "text-slate-100/90";
-  const iconText = "text-slate-100";
+  const brandText = onLight ? "text-foreground" : "text-white";
+  const linkText = onLight ? "text-foreground/80" : "text-white/80";
+  const mobileLinkText = onLight ? "text-foreground/90" : "text-white/90";
+  const iconText = onLight ? "text-foreground" : "text-white";
 
   const handleSignOut = async () => {
     await signOut();
@@ -82,7 +82,7 @@ const Navbar = () => {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium hover:text-gold transition-smooth relative group bg-slate-800 text-slate-800"
+              className={`text-sm font-medium ${linkText} hover:text-gold transition-smooth relative group`}
             >
               {l.label}
               <span className="absolute -bottom-1 left-0 right-0 h-px bg-gold scale-x-0 group-hover:scale-x-100 transition-smooth origin-left" />
@@ -90,7 +90,7 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3 text-slate-100">
+        <div className="hidden lg:flex items-center gap-3">
           <LangSwitcher onLight={onLight} />
           {user ? (
             <>
@@ -106,7 +106,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild className="hover:bg-white/10 text-gray-900">
+              <Button variant="ghost" size="sm" asChild className="text-white hover:text-white hover:bg-white/10">
                 <Link to="/auth?mode=signin">{t("nav.signin")}</Link>
               </Button>
               <Button variant="gold" size="sm" asChild>
