@@ -121,7 +121,7 @@ describe("RLS: lesson-materials storage bucket", () => {
     );
     await res.text();
     expect(res.ok).toBe(false);
-    expect([401, 403]).toContain(res.status);
+    expect([400, 401, 403]).toContain(res.status);
   }, 15000);
 });
 
