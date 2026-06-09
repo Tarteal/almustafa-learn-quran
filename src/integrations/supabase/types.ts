@@ -405,19 +405,49 @@ export type Database = {
           },
         ]
       }
+      teacher_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          teacher_id: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          teacher_id: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          teacher_id?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_contacts_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: true
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teachers: {
         Row: {
           avatar_url: string | null
           bio: string | null
           country: string | null
           created_at: string
-          email: string | null
           full_name: string
           id: string
           specialization: string | null
           topics: string[]
           user_id: string | null
-          whatsapp: string | null
           years_experience: number | null
         }
         Insert: {
@@ -425,13 +455,11 @@ export type Database = {
           bio?: string | null
           country?: string | null
           created_at?: string
-          email?: string | null
           full_name: string
           id?: string
           specialization?: string | null
           topics?: string[]
           user_id?: string | null
-          whatsapp?: string | null
           years_experience?: number | null
         }
         Update: {
@@ -439,13 +467,11 @@ export type Database = {
           bio?: string | null
           country?: string | null
           created_at?: string
-          email?: string | null
           full_name?: string
           id?: string
           specialization?: string | null
           topics?: string[]
           user_id?: string | null
-          whatsapp?: string | null
           years_experience?: number | null
         }
         Relationships: []
