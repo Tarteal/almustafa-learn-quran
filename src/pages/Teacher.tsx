@@ -341,6 +341,7 @@ const ClassCard = ({ c, label, reload }: { c: ClassRow; label: string; reload: (
   const meta = ATTENDANCE_META[attendance];
 
   const save = async () => {
+    if (meetingUrl && !isSafeHttpUrl(meetingUrl)) return toast.error("Meeting URL must start with https:// or http://");
     setSaving(true);
     const { error } = await supabase
       .from("classes")
