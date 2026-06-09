@@ -105,12 +105,24 @@ describe("RLS: lesson_materials", () => {
 
 describe("RLS: lesson-materials storage bucket", () => {
   it("anon cannot upload to the lesson-materials bucket", async () => {
-    const file = new Blob(["rls-test"], { type: "text/plain" });
-    const res = await anon.storage
-      .from("lesson-materials")
-      .upload(`rls-test-${Date.now()}.txt`, file, { upsert: false });
-    expect(res.error).toBeTruthy();
-  });
+    // Use raw fetch to avoid jsdom fetch/Blob quirks with the storage SDK.
+    const path = `rls-test-${Date.now()}.txt`;
+    const res = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/lesson-materials/${path}`,
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "text/plain",
+        },
+        body: "rls-test",
+      },
+    );
+    await res.text();
+    expect(res.ok).toBe(false);
+    expect([401, 403]).toContain(res.status);
+  }, 15000);
 });
 
 describe("RLS: teacher_availability", () => {
