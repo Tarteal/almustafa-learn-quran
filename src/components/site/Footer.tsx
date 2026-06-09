@@ -1,4 +1,5 @@
 import { useI18n } from "@/i18n/I18nContext";
+import logo from "@/assets/path-to-quran-logo.png.asset.json";
 
 const Footer = () => {
   const { t } = useI18n();
@@ -24,9 +25,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-10 pb-12 border-b border-background/10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <div className="h-12 w-12 rounded-full bg-gold/15 border border-gold/30 grid place-items-center">
-                <span className="font-arabic text-gold-light text-xl">ﷲ</span>
-              </div>
+              <img src={logo.url} alt="Path to Quran logo" className="h-14 w-auto object-contain bg-background/90 rounded-md p-1" />
               <div>
                 <div className="font-display text-xl tracking-wide">ALMUSTAFA CARAVAN</div>
                 <div className="text-[10px] tracking-[0.2em] uppercase text-gold-light">HAJJ UMRAH &amp; ZYARAH</div>
