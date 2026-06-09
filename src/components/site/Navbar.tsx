@@ -106,7 +106,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-white hover:text-white hover:bg-white/10">
                 <Link to="/auth?mode=signin">{t("nav.signin")}</Link>
               </Button>
               <Button variant="gold" size="sm" asChild>
