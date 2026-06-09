@@ -90,7 +90,7 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3 text-slate-100">
           <LangSwitcher onLight={onLight} />
           {user ? (
             <>
