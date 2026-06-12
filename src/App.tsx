@@ -15,8 +15,14 @@ import Teacher from "./pages/Teacher.tsx";
 import Admin from "./pages/Admin.tsx";
 import Schedule from "./pages/Schedule.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const queryClient = new QueryClient();
+
+const ScrollRevealMount = () => {
+  useScrollReveal();
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -26,6 +32,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollRevealMount />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
